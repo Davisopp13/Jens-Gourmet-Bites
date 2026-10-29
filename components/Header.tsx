@@ -19,8 +19,8 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <Cookie className="w-8 h-8 text-primary group-hover:text-accent transition-colors" />
-            <span className="font-display text-xl md:text-2xl text-primary">
+            <Cookie className="w-8 h-8 text-primary group-hover:text-accent-700 transition-colors" />
+            <span className="font-display text-xl md:text-2xl text-espresso">
               Jen&apos;s Gourmet Bites
             </span>
           </Link>
@@ -31,7 +31,7 @@ export default function Header() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-primary-700 hover:text-accent font-medium transition-colors"
+                className="text-espresso hover:text-primary font-medium transition-colors"
               >
                 {link.label}
               </a>
@@ -46,6 +46,8 @@ export default function Header() {
             className="md:hidden p-2 text-primary"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -53,13 +55,13 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-primary-100">
+          <nav id="mobile-navigation" className="md:hidden py-4 border-t border-primary-100">
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
-                  className="text-primary-700 hover:text-accent font-medium transition-colors py-2"
+                  className="text-espresso hover:text-primary font-medium transition-colors py-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {link.label}

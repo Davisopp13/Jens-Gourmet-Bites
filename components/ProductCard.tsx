@@ -33,7 +33,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
 
         {/* Featured Badge */}
         {product.is_featured && (
-          <div className="absolute top-3 left-3 flex items-center gap-1 bg-accent text-white px-3 py-1 rounded-full text-sm font-medium">
+          <div className="absolute top-3 left-3 flex items-center gap-1 bg-accent text-espresso px-3 py-1 rounded-full text-sm font-medium">
             <Star className="w-4 h-4 fill-current" />
             <span>Featured</span>
           </div>
@@ -42,11 +42,11 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
 
       {/* Content */}
       <div className="p-5">
-        <h3 className="font-display text-xl text-primary mb-2 group-hover:text-accent transition-colors">
+        <h3 className="font-display text-xl text-primary mb-2 group-hover:text-accent-700 transition-colors">
           {product.name}
         </h3>
 
-        <p className="text-primary-600 text-sm mb-4 leading-relaxed">
+        <p className="text-espresso text-sm mb-4 leading-relaxed">
           {truncateText(product.description, 100)}
         </p>
 
