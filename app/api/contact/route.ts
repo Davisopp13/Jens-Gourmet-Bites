@@ -60,19 +60,19 @@ export async function POST(request: NextRequest) {
           subject: `New Order Inquiry from ${name}`,
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #8B4513; border-bottom: 2px solid #8B4513; padding-bottom: 10px;">
+              <h2 style="color: #146C68; border-bottom: 2px solid #146C68; padding-bottom: 10px;">
                 New Order Inquiry
               </h2>
 
               <div style="margin: 20px 0;">
-                <p><strong style="color: #8B4513;">Name:</strong> ${name}</p>
-                <p><strong style="color: #8B4513;">Email:</strong> <a href="mailto:${email}">${email}</a></p>
-                <p><strong style="color: #8B4513;">Phone:</strong> ${phone || "Not provided"}</p>
-                <p><strong style="color: #8B4513;">Preferred Format:</strong> ${formatDisplay}</p>
+                <p><strong style="color: #146C68;">Name:</strong> ${name}</p>
+                <p><strong style="color: #146C68;">Email:</strong> <a href="mailto:${email}">${email}</a></p>
+                <p><strong style="color: #146C68;">Phone:</strong> ${phone || "Not provided"}</p>
+                <p><strong style="color: #146C68;">Preferred Format:</strong> ${formatDisplay}</p>
               </div>
 
-              <div style="background: #FFF8F0; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 0;"><strong style="color: #8B4513;">Message:</strong></p>
+              <div style="background: #FFF7ED; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 0;"><strong style="color: #146C68;">Message:</strong></p>
                 <p style="white-space: pre-wrap; margin: 10px 0 0 0;">${message}</p>
               </div>
 

@@ -10,38 +10,39 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#8B4513", // Saddle Brown
-          50: "#FDF8F3",
-          100: "#F5E6D3",
-          200: "#E8C9A8",
-          300: "#D4A574",
-          400: "#B8784A",
-          500: "#8B4513",
-          600: "#723910",
-          700: "#5A2D0D",
-          800: "#42210A",
-          900: "#2A1506",
+          DEFAULT: "#146C68", // Deep teal
+          50: "#F0F8F6",
+          100: "#D9ECE7",
+          200: "#B4D9D1",
+          300: "#82BDB4",
+          400: "#438F87",
+          500: "#146C68",
+          600: "#105B57",
+          700: "#104A47",
+          800: "#103C39",
+          900: "#0D2D2B",
         },
         cream: {
-          DEFAULT: "#FFF8F0",
+          DEFAULT: "#FFF7ED", // Warm vanilla
           50: "#FFFFFF",
-          100: "#FFF8F0",
-          200: "#FFEEDD",
-          300: "#FFE4CC",
+          100: "#FFF7ED",
+          200: "#FDEBDC",
+          300: "#F9D9C1",
         },
         accent: {
-          DEFAULT: "#C41E3A", // Cardinal Red
-          50: "#FDF2F4",
-          100: "#FCE7EB",
-          200: "#F9CED6",
-          300: "#F4A5B5",
-          400: "#ED6B85",
-          500: "#C41E3A",
-          600: "#A81932",
-          700: "#8C1529",
-          800: "#701120",
-          900: "#5A0E1A",
+          DEFAULT: "#F0AB87", // Peach; pair filled surfaces with espresso text
+          50: "#FFF0E5",
+          100: "#FDE3D3",
+          200: "#F9D1B9",
+          300: "#F5C3A6",
+          400: "#F2B795",
+          500: "#F0AB87",
+          600: "#E69870",
+          700: "#A4502D", // Dark peach for readable accent text on light surfaces
+          800: "#803B20",
+          900: "#5D2B19",
         },
+        espresso: "#382A24",
       },
       fontFamily: {
         display: ["var(--font-playfair)", "serif"],

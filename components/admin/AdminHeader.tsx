@@ -60,7 +60,7 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
             )}
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1 text-gray-600 hover:text-accent transition-colors text-sm"
+              className="flex items-center gap-1 text-gray-600 hover:text-accent-700 transition-colors text-sm"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Sign Out</span>
