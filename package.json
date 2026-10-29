@@ -6,26 +6,37 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:receipts": "tsx --test tests/receipts.test.ts tests/receipt-database.test.ts tests/receipt-reader.test.ts tests/receipt-access.test.ts",
+    "check:receipt-reader": "node --env-file=.env.local --import tsx scripts/check-receipt-reader.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.93.3",
+    "cheerio": "^1.2.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.563.0",
-    "next": "14.2.35",
-    "react": "^18",
-    "react-dom": "^18",
-    "resend": "^6.9.1"
+    "next": "15.5.28",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "recharts": "^3.7.0",
+    "resend": "^6.9.1",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "eslint": "^8",
-    "eslint-config-next": "14.2.35",
+    "eslint-config-next": "15.5.28",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
+    "tsx": "4.20.6",
     "typescript": "^5"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "8.5.32"
+    }
   }
 }

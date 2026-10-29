@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Cookie, LogOut, Package, Home } from "lucide-react";
+import { Cookie, LogOut, Package, Home, DollarSign } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 interface AdminHeaderProps {
@@ -25,29 +25,39 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo and Title */}
           <div className="flex items-center gap-4">
-            <Link href="/admin" className="flex items-center gap-2">
+            <Link href="/admin" aria-label="Jen’s Gourmet Bites admin home" className="flex items-center gap-2 min-h-11 min-w-11">
               <Cookie className="w-8 h-8 text-primary" />
               <span className="font-display text-xl text-primary hidden sm:inline">
-                Admin Portal
+                Jen’s Gourmet Bites
               </span>
             </Link>
           </div>
 
           {/* Navigation */}
-          <nav className="flex items-center gap-6">
+          <nav className="flex items-center gap-2 sm:gap-6">
             <Link
               href="/"
-              className="flex items-center gap-1 text-gray-600 hover:text-primary transition-colors text-sm"
+              aria-label="View site"
+              className="flex items-center justify-center min-h-11 min-w-11 gap-1 text-gray-600 hover:text-primary transition-colors text-sm"
             >
               <Home className="w-4 h-4" />
               <span className="hidden sm:inline">View Site</span>
             </Link>
             <Link
               href="/admin/products"
-              className="flex items-center gap-1 text-gray-600 hover:text-primary transition-colors text-sm"
+              aria-label="Products"
+              className="flex items-center justify-center min-h-11 min-w-11 gap-1 text-gray-600 hover:text-primary transition-colors text-sm"
             >
               <Package className="w-4 h-4" />
               <span className="hidden sm:inline">Products</span>
+            </Link>
+            <Link
+              href="/admin/pricing"
+              aria-label="Pricing"
+              className="flex items-center justify-center min-h-11 min-w-11 gap-1 text-gray-600 hover:text-primary transition-colors text-sm"
+            >
+              <DollarSign className="w-4 h-4" />
+              <span className="hidden sm:inline">Pricing</span>
             </Link>
           </nav>
 
@@ -60,7 +70,8 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
             )}
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1 text-gray-600 hover:text-accent-700 transition-colors text-sm"
+              aria-label="Sign out"
+              className="flex items-center justify-center min-h-11 min-w-11 gap-1 text-gray-600 hover:text-accent-700 transition-colors text-sm"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Sign Out</span>
