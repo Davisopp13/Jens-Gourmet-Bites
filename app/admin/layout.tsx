@@ -15,7 +15,7 @@ export default async function AdminLayout({
   // The login page itself will handle redirecting authenticated users
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-primary-50">
       {user && <AdminHeader userEmail={user.email} />}
       <main className={user ? "max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8" : ""}>
         {children}

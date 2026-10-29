@@ -1,0 +1,50 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { blankReview } from '../lib/receipts/types';
+// An isolated native PostgreSQL cluster. No remote Supabase or user data is used.
+test('receipt migration, access boundaries, atomic review and history',()=>{
+ const dir=mkdtempSync(join(tmpdir(),'jgb-receipt-pg-'));const port='55483';
+ const pg=join(dir,'data');const options={encoding:'utf8' as const,stdio:['pipe','pipe','pipe'] as ['pipe','pipe','pipe']};
+ const sql=(query:string)=>execFileSync('psql',['-h',dir,'-p',port,'-U','postgres','-d','postgres','-X','-qAt','-v','ON_ERROR_STOP=1'],{...options,input:query}).trim();
+ try{
+  execFileSync('initdb',['-D',pg,'-U','postgres','--auth-local=trust','--auth-host=reject'],options);
+  execFileSync('pg_ctl',['-D',pg,'-l',join(dir,'postgres.log'),'-o',`-k ${dir} -p ${port} -h ''`,'-w','start'],options);
+  sql(`create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create schema storage;
+  create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+  grant usage on schema public,auth to authenticated,service_role;
+  create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
+  create table ingredients(id uuid primary key,name text,unit text,package_quantity numeric,current_price_cents integer,supplier_name text);
+  create table price_history(id uuid default gen_random_uuid(),ingredient_id uuid,price_cents integer,supplier_name text,scraped_at timestamptz default now());
+  grant all on ingredients,price_history to service_role;`);
+  sql(readFileSync('supabase/migrations/20261028215008_receipt_archive.sql','utf8'));
+  const owner='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',other='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',ing='cccccccc-cccc-4ccc-8ccc-cccccccccccc',rid='dddddddd-dddd-4ddd-8ddd-dddddddddddd';
+  sql(`insert into auth.users values('${owner}'),('${other}');insert into ingredients(id,name,unit,package_quantity,current_price_cents) values('${ing}','Flour','lb',1,200);insert into receipts(id,owner_id,source,fingerprint) values('${rid}','${owner}','upload','hash1');`);
+  assert.equal(sql(`set role authenticated;set request.jwt.claim.sub='${owner}';select count(*) from receipts;`),'1');
+  assert.equal(sql(`set role authenticated;set request.jwt.claim.sub='${other}';select count(*) from receipts;`),'0');
+  assert.throws(()=>sql(`set role authenticated;insert into receipts(owner_id,source,fingerprint) values('${owner}','upload','bad');`));
+  assert.equal(sql(`select has_function_privilege('authenticated','review_receipt(uuid,uuid,integer,jsonb,boolean)','execute');`),'f');
+  assert.equal(sql(`select public from storage.buckets where id='receipts';`),'f');
+  const data={...blankReview(),store:'Publix',purchased_on:'2026-10-28',total_cents:649,lines:[{id:rid,description:'Flour',quantity:1,net_cents:649,package_quantity:5,unit:'lb',ingredient_id:ing,exact_product:'King Arthur AP',confirmed:true,use_for_pricing:true,category:'ingredient',on_sale:false}]};
+  const review=(d:unknown,version=1,apply=true,o=owner)=>`set role service_role;select (review_receipt('${rid}','${o}',${version},'${JSON.stringify(d).replace(/'/g,"''")}'::jsonb,${apply})).status;`;
+  assert.throws(()=>sql(review(data,1,true,other)));
+  assert.throws(()=>sql(review({...data,total_cents:650})));
+  assert.equal(sql(`select current_price_cents from ingredients where id='${ing}'`),'200');
+  assert.equal(sql(`select count(*) from price_history`),'0');
+  assert.equal(sql(review(data,1,false)),'archived');
+  assert.equal(sql(`select current_price_cents from ingredients where id='${ing}'`),'200');
+  assert.throws(()=>sql(review(data,1,true)));
+  assert.equal(sql(review(data,2,true)),'reviewed');
+  assert.equal(sql(`select current_price_cents from ingredients where id='${ing}'`),'130');
+  assert.equal(sql(`select count(*) from price_history where receipt_id='${rid}'`),'1');
+  assert.throws(()=>sql(review(data,3,true)));
+  assert.equal(sql(`select count(*) from price_history`),'1');
+  assert.throws(()=>sql(`insert into receipts(owner_id,source,fingerprint) values('${owner}','upload','hash1');`));
+  const older='eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';sql(`insert into receipts(id,owner_id,source,fingerprint) values('${older}','${owner}','upload','hash2');`);
+  assert.throws(()=>sql(review({...data,purchased_on:'2026-10-01'}).replace(rid,older)));
+  assert.equal(sql(`select count(*) from price_history`),'1');
+ }finally{try{execFileSync('pg_ctl',['-D',pg,'-m','fast','-w','stop'],options);}catch{}rmSync(dir,{recursive:true,force:true});}
+});
