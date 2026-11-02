@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "Jen's Gourmet Bites Admin",
   manifest: "/admin.webmanifest",
   appleWebApp: { capable: true, title: "Jen's Admin", statusBarStyle: "default" },
-  icons: { apple: "/admin-icons/apple-touch-icon.png" },
+  icons: { apple: "/admin-icons/kitchen-apple.png" },
 };
 
 export const viewport: Viewport = { themeColor: "#4a2e1f" };
