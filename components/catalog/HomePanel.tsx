@@ -57,7 +57,7 @@ export default function HomePanel({ note, onBrowse, onOrder }: HomePanelProps) {
       </div>
 
       <div className="relative order-1 mx-auto min-w-0 max-w-[260px] flex-[1_1_360px] pt-2 sm:max-w-[440px] lg:order-2 lg:pt-0">
-        <div className="cat-polaroid bg-white px-4 pb-14 pt-4 shadow-[0_8px_20px_rgba(74,46,31,.3)]">
+        <div className="cat-polaroid bg-white px-4 pb-6 pt-4 shadow-[0_8px_20px_rgba(74,46,31,.3)]">
           <div className="relative aspect-square w-full overflow-hidden bg-[#D9B98A]">
             <Image
               src="/images/hero-jen-cookies.jpg"
@@ -68,7 +68,6 @@ export default function HomePanel({ note, onBrowse, onOrder }: HomePanelProps) {
               sizes="(max-width: 1023px) min(440px, 90vw), 440px"
             />
           </div>
-          <div className="mt-2 text-center font-cat-hand text-[32px] font-bold">Jen, mid-bake</div>
         </div>
         <div
           aria-hidden="true"
