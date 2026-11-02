@@ -196,6 +196,7 @@ export default function ProductForm({ product, mode }: ProductFormProps) {
                 </label>
                 <input
                   type="number"
+                  inputMode="decimal"
                   id="price"
                   name="price"
                   required
@@ -344,7 +345,8 @@ export default function ProductForm({ product, mode }: ProductFormProps) {
             </label>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit Button (sticky above the mobile tab bar) */}
+          <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-40 -mx-4 border-t-2 border-cat-ink bg-cat-paper px-4 py-3 lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:p-0">
           <button
             type="submit"
             disabled={loading}
@@ -362,6 +364,7 @@ export default function ProductForm({ product, mode }: ProductFormProps) {
               </>
             )}
           </button>
+          </div>
         </div>
       </div>
     </form>
