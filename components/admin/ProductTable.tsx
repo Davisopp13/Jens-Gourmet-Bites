@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,18 @@ export default function ProductTable({ products }: ProductTableProps) {
   const supabase = createClient();
   const [updating, setUpdating] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Product | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const deleteTrigger = useRef<HTMLButtonElement | null>(null);
+  const cancelDelete = useRef<HTMLButtonElement | null>(null);
+  const confirmDelete = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!pendingDelete && deleteTrigger.current) {
+      deleteTrigger.current.focus();
+      deleteTrigger.current = null;
+    }
+  }, [pendingDelete]);
 
   const handleToggle = async (
     id: string,
@@ -38,17 +50,22 @@ export default function ProductTable({ products }: ProductTableProps) {
     }
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete "${name}"?`)) {
-      return;
-    }
-
-    setDeleting(id);
+  const handleDelete = async (product: Product) => {
+    setDeleting(product.id);
+    setDeleteError(null);
     try {
-      await supabase.from("products").delete().eq("id", id);
+      const { data, error } = await supabase
+        .from("products")
+        .delete()
+        .eq("id", product.id)
+        .select("id");
+      if (error) throw error;
+      if (data.length !== 1) throw new Error("The product was not deleted. Refresh the page and try again.");
+      setPendingDelete(null);
       router.refresh();
     } catch (error) {
       console.error("Error deleting product:", error);
+      setDeleteError("Could not delete this product. Please refresh the page and try again.");
     } finally {
       setDeleting(null);
     }
@@ -121,7 +138,7 @@ export default function ProductTable({ products }: ProductTableProps) {
       </Link>
       <button
         type="button"
-        onClick={() => handleDelete(product.id, product.name)}
+        onClick={(event) => { deleteTrigger.current = event.currentTarget; setDeleteError(null); setPendingDelete(product); }}
         disabled={deleting === product.id}
         aria-label={`Delete ${product.name}`}
         aria-busy={deleting === product.id}
@@ -151,6 +168,27 @@ export default function ProductTable({ products }: ProductTableProps) {
 
   return (
     <>
+      {pendingDelete && (
+        <div role="alertdialog" aria-modal="true" aria-labelledby="delete-product-title" aria-describedby="delete-product-description" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onKeyDown={(event) => {
+          if (event.key === "Escape" && !deleting) setPendingDelete(null);
+          if (event.key === "Tab" && !deleting) {
+            if (event.shiftKey && document.activeElement === cancelDelete.current) { event.preventDefault(); confirmDelete.current?.focus(); }
+            else if (!event.shiftKey && document.activeElement === confirmDelete.current) { event.preventDefault(); cancelDelete.current?.focus(); }
+          }
+        }}>
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h2 id="delete-product-title" className="text-lg font-semibold text-gray-900">Delete {pendingDelete.name}?</h2>
+            <p id="delete-product-description" className="mt-2 text-sm text-gray-600">This permanently deletes the product and any recipe linked to it.</p>
+            {deleteError && <p role="alert" className="mt-3 text-sm text-red-700">{deleteError}</p>}
+            <div className="mt-5 flex justify-end gap-3">
+              <button ref={cancelDelete} type="button" autoFocus disabled={!!deleting} onClick={() => setPendingDelete(null)} className={`min-h-11 rounded-lg border border-gray-300 px-4 text-sm font-medium disabled:opacity-50 ${focusRing}`}>Cancel</button>
+              <button ref={confirmDelete} type="button" disabled={!!deleting} onClick={() => handleDelete(pendingDelete)} className={`min-h-11 rounded-lg bg-red-700 px-4 text-sm font-medium text-white disabled:opacity-50 ${focusRing}`}>
+                {deleting ? "Deleting…" : "Delete product"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <ul aria-label="Products" className="min-w-0 space-y-4 lg:hidden">
         {products.map((product) => (
           <li key={product.id} className="min-w-0 space-y-4 rounded-lg border border-gray-200 bg-white p-4">
