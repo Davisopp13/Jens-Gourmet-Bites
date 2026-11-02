@@ -13,7 +13,7 @@ interface OrderPanelProps {
 const fieldClass =
   "w-full min-h-[48px] rounded-lg border-2 border-cat-ink bg-white px-3.5 py-2.5 text-cat-ink placeholder:text-[#7A6558] focus:outline-none focus-visible:ring-[3px] focus-visible:ring-cat-sage";
 
-const labelClass = "mb-1 block bg-cat-paper px-1 text-sm font-semibold";
+const labelClass = "mb-1 block px-1 text-sm font-semibold";
 
 export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelProps) {
   const [formData, setFormData] = useState<ContactFormData>({
@@ -68,12 +68,12 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
 
   return (
     <div className="max-w-[640px]">
-      <div className="inline-block bg-cat-paper px-2 font-cat-hand text-3xl font-bold text-cat-rust">
+      <div className="inline-block px-2 font-cat-hand text-3xl font-bold text-cat-rust">
         Recipe No. 3 · your order card
       </div>
 
       {status === "success" ? (
-        <div className="mt-4 bg-cat-paper p-2" role="status">
+        <div className="mt-4 p-2" role="status">
           <CheckCircle className="mb-3 h-12 w-12 text-cat-sage" aria-hidden="true" />
           <h2 className="font-cat-display text-4xl font-normal">Your card is in the oven!</h2>
           <p className="mt-2 text-lg leading-relaxed">
@@ -88,7 +88,7 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
         </div>
       ) : (
         <>
-          <h2 className="my-2 inline-block bg-cat-paper px-2 font-cat-display text-4xl font-normal md:text-[44px]">
+          <h2 className="my-2 inline-block px-2 font-cat-display text-4xl font-normal md:text-[44px]">
             {headline}
           </h2>
 
@@ -100,7 +100,7 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
           </div>
 
           {picked.length > 0 && (
-            <ul className="mt-4 flex flex-wrap gap-2 bg-cat-paper px-2 py-1">
+            <ul className="mt-4 flex flex-wrap gap-2 px-2 py-1">
               {picked.map((p) => (
                 <li
                   key={p.id}
@@ -121,7 +121,7 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
           )}
 
           {picked.length === 0 && (
-            <p className="mt-3 inline-block bg-cat-paper px-2">
+            <p className="mt-3 inline-block px-2">
               Pick some cookies first, or just tell Jen what you&apos;re craving below.{" "}
               <button onClick={onBrowse} className="min-h-[44px] cursor-pointer text-cat-rust underline">
                 Browse the cookies

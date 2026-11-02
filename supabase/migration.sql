@@ -166,3 +166,48 @@ CREATE POLICY "Authenticated users can delete images"
   TO authenticated
   USING (bucket_id = 'product-images');
 */
+
+-- ==============================================
+-- SITE SETTINGS TABLE (editable site text, e.g. the "note from Jen" on the home page)
+-- Run this section in the Supabase SQL Editor.
+-- ==============================================
+CREATE TABLE IF NOT EXISTS site_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL DEFAULT '',
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+DROP TRIGGER IF EXISTS update_site_settings_updated_at ON site_settings;
+CREATE TRIGGER update_site_settings_updated_at
+  BEFORE UPDATE ON site_settings
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can read the site text
+DROP POLICY IF EXISTS "Anyone can view site settings" ON site_settings;
+CREATE POLICY "Anyone can view site settings"
+  ON site_settings FOR SELECT
+  USING (true);
+
+-- Only signed-in admins can change it
+DROP POLICY IF EXISTS "Authenticated users can insert site settings" ON site_settings;
+CREATE POLICY "Authenticated users can insert site settings"
+  ON site_settings FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Authenticated users can update site settings" ON site_settings;
+CREATE POLICY "Authenticated users can update site settings"
+  ON site_settings FOR UPDATE
+  TO authenticated
+  USING (true)
+  WITH CHECK (true);
+
+-- Starting text (matches the original copy); safe to re-run
+INSERT INTO site_settings (key, value) VALUES
+  ('home_note_title', 'a note from Jen'),
+  ('home_note_quote', 'What started as a passion for baking in my Johns Creek kitchen has grown into a labor of love that I''m thrilled to share with you. Each cookie is made from scratch using family recipes and the finest ingredients, because you deserve nothing less than the best.'),
+  ('home_note_footer', 'Proudly serving Metro Atlanta. Local pickup available, and we can arrange delivery for larger orders.')
+ON CONFLICT (key) DO NOTHING;

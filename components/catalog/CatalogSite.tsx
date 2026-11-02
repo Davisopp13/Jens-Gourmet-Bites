@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Product } from "@/lib/types";
+import type { HomeNote } from "@/lib/site-settings";
 import HomePanel from "./HomePanel";
 import CookiesPanel from "./CookiesPanel";
 import OrderPanel from "./OrderPanel";
@@ -18,9 +19,10 @@ const TABS: { id: TabId; label: string; bg: string; delay: string }[] = [
 
 interface CatalogSiteProps {
   products: Product[];
+  note: HomeNote;
 }
 
-export default function CatalogSite({ products }: CatalogSiteProps) {
+export default function CatalogSite({ products, note }: CatalogSiteProps) {
   const [tab, setTab] = useState<TabId>("home");
   const [picks, setPicks] = useState<string[]>([]);
   const [bump, setBump] = useState(false);
@@ -114,7 +116,7 @@ export default function CatalogSite({ products }: CatalogSiteProps) {
 
         <div className="relative min-h-[560px] rounded-xl bg-cat-paper p-5 shadow-[0_14px_30px_rgba(40,22,10,.35)] [background-image:repeating-linear-gradient(transparent_0_39px,#C9DCE8_39px_40px)] md:p-14">
           <div key={tab} role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} className="cat-panel">
-            {tab === "home" && <HomePanel onBrowse={() => goTo("cookies")} onOrder={() => goTo("order")} />}
+            {tab === "home" && <HomePanel note={note} onBrowse={() => goTo("cookies")} onOrder={() => goTo("order")} />}
             {tab === "cookies" && (
               <CookiesPanel
                 products={products}

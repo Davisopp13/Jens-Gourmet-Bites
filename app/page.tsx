@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getHomeNote } from "@/lib/site-settings";
 import CatalogSite from "@/components/catalog/CatalogSite";
 
 export default async function HomePage() {
@@ -14,5 +15,7 @@ export default async function HomePage() {
     console.error("Error fetching products:", error);
   }
 
-  return <CatalogSite products={products || []} />;
+  const note = await getHomeNote(supabase);
+
+  return <CatalogSite products={products || []} note={note} />;
 }

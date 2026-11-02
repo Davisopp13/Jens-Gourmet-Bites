@@ -22,12 +22,12 @@ const CARD_STYLES = [
 export default function CookiesPanel({ products, picks, stamped, onToggle, onOrder }: CookiesPanelProps) {
   return (
     <div>
-      <div className="inline-block bg-cat-paper px-2 font-cat-hand text-3xl font-bold text-cat-rust">
+      <div className="inline-block px-2 font-cat-hand text-3xl font-bold text-cat-rust">
         Recipe No. 2 · the whole drawer
       </div>
 
       {products.length === 0 ? (
-        <p className="mt-6 bg-cat-paper px-2 text-lg">
+        <p className="mt-6 px-2 text-lg">
           The drawer is empty at the moment. Check back soon!
         </p>
       ) : (

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Cookie, LogOut, Package, Home, DollarSign } from "lucide-react";
+import { Cookie, LogOut, Package, Home, DollarSign, StickyNote } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 interface AdminHeaderProps {
@@ -50,6 +50,14 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
             >
               <Package className="w-4 h-4" />
               <span className="hidden sm:inline">Products</span>
+            </Link>
+            <Link
+              href="/admin/note"
+              aria-label="Home note"
+              className="flex items-center justify-center min-h-11 min-w-11 gap-1 rounded-lg px-2 text-[#FFF8E8] hover:bg-white/10 hover:text-cat-tape transition-colors text-sm"
+            >
+              <StickyNote className="w-4 h-4" />
+              <span className="hidden sm:inline">Home Note</span>
             </Link>
             <Link
               href="/admin/pricing"
