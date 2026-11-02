@@ -10,7 +10,7 @@
     "test:receipts": "tsx --test tests/receipts.test.ts tests/receipt-database.test.ts tests/receipt-reader.test.ts tests/receipt-access.test.ts",
     "check:receipt-reader": "node --env-file=.env.local --import tsx scripts/check-receipt-reader.ts",
     "test:contact": "tsx --test tests/contact.test.ts",
-    "test:inquiries": "tsx --test tests/contact.test.ts tests/inquiry-database.test.ts tests/inquiry-worker.test.ts"
+    "test:inquiries": "tsx --test tests/contact.test.ts tests/inquiry-database.test.ts tests/inquiry-worker.test.ts tests/admin-signout.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",

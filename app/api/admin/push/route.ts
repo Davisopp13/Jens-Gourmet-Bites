@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
+  authenticatedUser,
   inquiryUser,
   inquiryFailure,
   privateHeaders,
@@ -56,7 +57,8 @@ export async function POST(request: Request) {
 }
 export async function DELETE(request: Request) {
   try {
-    const user = await inquiryUser(request);
+    // A former inquiry admin may still remove their own device, never another user's.
+    const user = await authenticatedUser(request);
     const { endpoint } = await request.json();
     if (typeof endpoint !== "string" || endpoint.length > 3000)
       throw new InquiryError("Invalid device.");

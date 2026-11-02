@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import InquiryNav from "./InquiryNav";
 import { disableDevicePush } from "./PushSettings";
 import { useRouter } from "next/navigation";
@@ -21,19 +22,32 @@ interface AdminHeaderProps {
 export default function AdminHeader({ userEmail }: AdminHeaderProps) {
   const router = useRouter();
   const supabase = createClient();
+  const [signingOut, setSigningOut] = useState(false);
 
   const handleSignOut = async () => {
+    setSigningOut(true);
+    let cleanupFailed = false;
     try {
       await disableDevicePush();
     } catch {
-      window.alert(
-        "Notifications could not be disabled. Please try signing out again while online.",
-      );
-      return;
+      cleanupFailed = true;
     }
-    await supabase.auth.signOut();
-    router.push("/admin/login");
-    router.refresh();
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      if (cleanupFailed)
+        window.alert(
+          "You are signed out, but notification cleanup could not be confirmed. If alerts continue, turn off notifications for Jen’s Admin in this device’s settings.",
+        );
+      router.replace("/admin/login");
+      router.refresh();
+    } catch {
+      window.alert(
+        "Sign-out could not be completed. Please try again.",
+      );
+    } finally {
+      setSigningOut(false);
+    }
   };
 
   return (
@@ -100,6 +114,7 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
             )}
             <button
               onClick={handleSignOut}
+              disabled={signingOut}
               aria-label="Sign out"
               className="flex items-center justify-center min-h-11 min-w-11 gap-1 rounded-lg px-2 text-[#FFF8E8] hover:bg-white/10 hover:text-cat-tape transition-colors text-sm"
             >
