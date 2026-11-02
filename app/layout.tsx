@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter, Young_Serif, Caveat, Lora } from "next/font/google";
+import { Young_Serif, Caveat, Lora } from "next/font/google";
 import "./globals.css";
 
 const youngSerif = Young_Serif({
@@ -21,18 +21,6 @@ const lora = Lora({
   display: "swap",
 });
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   title: "Jen's Gourmet Bites | Artisan Cookies in Johns Creek, GA",
   description:
@@ -51,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable} ${youngSerif.variable} ${caveat.variable} ${lora.variable}`}>
+    <html lang="en" className={`${youngSerif.variable} ${caveat.variable} ${lora.variable}`}>
       <body className="font-body bg-cream text-espresso antialiased">
         {children}
       </body>

@@ -18,32 +18,30 @@
   h5,
   h6 {
     @apply font-display;
+    font-synthesis-weight: none;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+    @apply inline-flex items-center justify-center px-6 py-3 min-h-[44px] bg-primary text-white font-semibold rounded-lg hover:bg-primary-600 hover:-translate-y-0.5 active:translate-y-px transition duration-200 focus:outline-none focus-visible:ring-[3px] focus-visible:ring-primary focus-visible:ring-offset-2;
   }
 
-  .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 bg-accent text-espresso font-medium rounded-lg hover:bg-accent-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
-  }
-
+  .btn-secondary,
   .btn-accent {
-    @apply inline-flex items-center justify-center px-6 py-3 bg-accent text-espresso font-medium rounded-lg hover:bg-accent-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+    @apply inline-flex items-center justify-center px-6 py-3 min-h-[44px] bg-cat-butter text-cat-ink font-semibold rounded-lg hover:bg-cat-tape hover:-translate-y-0.5 active:translate-y-px transition duration-200 focus:outline-none focus-visible:ring-[3px] focus-visible:ring-primary focus-visible:ring-offset-2;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 border border-primary-200 rounded-lg bg-white text-espresso placeholder:text-primary-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200;
+    @apply w-full min-h-[44px] px-4 py-3 border-2 border-cat-ink/70 rounded-lg bg-white text-cat-ink placeholder:text-gray-500 focus:outline-none focus-visible:ring-[3px] focus-visible:ring-primary focus:border-cat-ink transition-all duration-200;
   }
 
   .card {
-    @apply bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300;
+    @apply bg-cat-paper rounded-xl border border-cat-ink/15 shadow-[0_6px_14px_rgba(40,22,10,.18)] overflow-hidden hover:shadow-[0_10px_20px_rgba(40,22,10,.25)] transition-shadow duration-300;
   }
 
   .section-heading {
-    @apply text-3xl md:text-4xl font-display text-primary mb-4;
+    @apply text-3xl md:text-4xl font-display text-cat-ink mb-4;
   }
 
   .container-custom {

@@ -40,27 +40,28 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cream px-4">
+    <div className="min-h-screen flex items-center justify-center bg-cat-wood px-4 text-cat-ink [background-image:repeating-linear-gradient(90deg,rgba(74,46,31,.08)_0_2px,transparent_2px_38px)]">
       <div className="w-full max-w-md">
         {/* Back to site link */}
         <Link
           href="/"
-          className="inline-flex items-center gap-1 text-primary-600 hover:text-primary mb-8 text-sm"
+          className="inline-flex items-center gap-1 text-[#FFF8E8] hover:text-cat-tape mb-8 text-sm min-h-[44px]"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to website
         </Link>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+        <div className="relative rounded-xl bg-cat-paper p-8 shadow-[0_14px_30px_rgba(40,22,10,.35)]">
+          <div aria-hidden="true" className="absolute -top-3.5 left-1/2 -ml-12 h-[30px] w-24 -rotate-3 bg-cat-tape/85" />
           {/* Logo */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-100 mb-4">
+          <div className="text-center mb-8 bg-cat-paper pb-2">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-cat-butter mb-4">
               <Cookie className="w-8 h-8 text-primary" />
             </div>
-            <h1 className="font-display text-2xl text-primary">Admin Login</h1>
-            <p className="text-primary-600 text-sm mt-2">
-              Sign in to manage your products
+            <h1 className="font-display text-3xl text-cat-ink">Admin Login</h1>
+            <p className="font-cat-hand text-2xl text-cat-rust mt-1">
+              Sign in to open the recipe box
             </p>
           </div>
 

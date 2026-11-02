@@ -15,11 +15,17 @@ export default async function AdminLayout({
   // The login page itself will handle redirecting authenticated users
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-cat-wood text-cat-ink [background-image:repeating-linear-gradient(90deg,rgba(74,46,31,.08)_0_2px,transparent_2px_38px)]">
       {user && <AdminHeader userEmail={user.email} />}
-      <main className={user ? "max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8" : ""}>
-        {children}
-      </main>
+      {user ? (
+        <main className="max-w-7xl mx-auto pb-10 px-4 sm:px-6 lg:px-8">
+          <div className="rounded-xl bg-cat-paper p-4 shadow-[0_14px_30px_rgba(40,22,10,.35)] sm:p-6 lg:p-8">
+            {children}
+          </div>
+        </main>
+      ) : (
+        <main>{children}</main>
+      )}
     </div>
   );
 }

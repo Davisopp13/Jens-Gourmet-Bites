@@ -10,17 +10,30 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#146C68", // Deep teal
-          50: "#F0F8F6",
-          100: "#D9ECE7",
-          200: "#B4D9D1",
-          300: "#82BDB4",
-          400: "#438F87",
-          500: "#146C68",
-          600: "#105B57",
-          700: "#104A47",
-          800: "#103C39",
-          900: "#0D2D2B",
+          DEFAULT: "#5E7B55", // Sage (was deep teal); also drives the admin
+          50: "#F4F7EE",
+          100: "#E6EDDA",
+          200: "#D8E0C4",
+          300: "#B5C69E",
+          400: "#8AA67B",
+          500: "#5E7B55",
+          600: "#4F6B47",
+          700: "#41583B",
+          800: "#34462F",
+          900: "#283725",
+        },
+        // Warm brown-greys replace Tailwind's cool greys so the admin matches the catalog
+        gray: {
+          50: "#FBF6EC",
+          100: "#F5EDDC",
+          200: "#E8DCC3",
+          300: "#D3C3A5",
+          400: "#A08E7A",
+          500: "#7A6556",
+          600: "#5C4636",
+          700: "#4A3526",
+          800: "#3A2A1E",
+          900: "#2B1D14",
         },
         cream: {
           DEFAULT: "#FFF7ED", // Warm vanilla
@@ -63,8 +76,8 @@ const config: Config = {
         "cat-display": ["var(--font-young-serif)", "serif"],
         "cat-hand": ["var(--font-caveat)", "cursive"],
         "cat-body": ["var(--font-lora)", "serif"],
-        display: ["var(--font-playfair)", "serif"],
-        body: ["var(--font-inter)", "sans-serif"],
+        display: ["var(--font-young-serif)", "serif"],
+        body: ["var(--font-lora)", "serif"],
       },
     },
   },
