@@ -1,5 +1,6 @@
 "use client";
 
+import { safeInquiryReturn } from "@/lib/inquiries/types";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -30,7 +31,11 @@ export default function AdminLoginPage() {
         return;
       }
 
-      router.push("/admin/products");
+      router.push(
+        safeInquiryReturn(
+          new URLSearchParams(window.location.search).get("next"),
+        ),
+      );
       router.refresh();
     } catch {
       setError("An unexpected error occurred");
@@ -53,7 +58,10 @@ export default function AdminLoginPage() {
 
         {/* Login Card */}
         <div className="relative rounded-xl bg-cat-paper p-8 shadow-[0_14px_30px_rgba(40,22,10,.35)]">
-          <div aria-hidden="true" className="absolute -top-3.5 left-1/2 -ml-12 h-[30px] w-24 -rotate-3 bg-cat-tape/85" />
+          <div
+            aria-hidden="true"
+            className="absolute -top-3.5 left-1/2 -ml-12 h-[30px] w-24 -rotate-3 bg-cat-tape/85"
+          />
           {/* Logo */}
           <div className="text-center mb-8 bg-cat-paper pb-2">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-cat-butter mb-4">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Send, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { ContactFormData } from "@/lib/types";
 
@@ -12,19 +12,29 @@ export default function ContactForm() {
     message: "",
     preferred_format: "either",
   });
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const submission = useRef<{ payload: string; id: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
     setErrorMessage("");
 
+    const payload = JSON.stringify(formData);
+    if (!submission.current || submission.current.payload !== payload)
+      submission.current = { payload, id: crypto.randomUUID() };
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          submission_id: submission.current.id,
+        }),
       });
 
       if (!response.ok) {
@@ -32,6 +42,7 @@ export default function ContactForm() {
         throw new Error(data.error || "Something went wrong");
       }
 
+      submission.current = null;
       setStatus("success");
       setFormData({
         name: "",
@@ -42,12 +53,16 @@ export default function ContactForm() {
       });
     } catch (error) {
       setStatus("error");
-      setErrorMessage(error instanceof Error ? error.message : "Failed to submit");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Failed to submit",
+      );
     }
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -69,10 +84,10 @@ export default function ContactForm() {
             <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
               <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
               <h3 className="font-display text-xl text-green-800 mb-2">
-                Message Sent!
+                Inquiry received!
               </h3>
               <p className="text-green-700">
-                Thank you for your inquiry. We&apos;ll be in touch soon!
+                Thank you! Your inquiry is saved. We&apos;ll be in touch soon!
               </p>
               <button
                 onClick={() => setStatus("idle")}
@@ -92,7 +107,10 @@ export default function ContactForm() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-primary-700 mb-2">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-primary-700 mb-2"
+                  >
                     Name <span className="text-accent-700">*</span>
                   </label>
                   <input
@@ -108,7 +126,10 @@ export default function ContactForm() {
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-primary-700 mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-primary-700 mb-2"
+                  >
                     Email <span className="text-accent-700">*</span>
                   </label>
                   <input
@@ -126,7 +147,10 @@ export default function ContactForm() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-primary-700 mb-2">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-primary-700 mb-2"
+                  >
                     Phone <span className="text-primary-600">(optional)</span>
                   </label>
                   <input
@@ -141,7 +165,10 @@ export default function ContactForm() {
                 </div>
 
                 <div>
-                  <label htmlFor="preferred_format" className="block text-sm font-medium text-primary-700 mb-2">
+                  <label
+                    htmlFor="preferred_format"
+                    className="block text-sm font-medium text-primary-700 mb-2"
+                  >
                     Preferred Format
                   </label>
                   <select
@@ -159,7 +186,10 @@ export default function ContactForm() {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-primary-700 mb-2">
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-medium text-primary-700 mb-2"
+                >
                   Message <span className="text-accent-700">*</span>
                 </label>
                 <textarea
