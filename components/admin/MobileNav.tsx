@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { DollarSign, Home, Inbox, LogOut, MoreHorizontal, Package, StickyNote, X } from "lucide-react";
-import { disableDevicePush } from "./PushSettings";
-import { createClient } from "@/lib/supabase/client";
+import { useAdminSignOut } from "./useAdminSignOut";
 
 const tabs = [
   { href: "/admin/products", label: "Products", Icon: Package },
@@ -16,20 +15,8 @@ const tabs = [
 
 export default function MobileNav({ userEmail }: { userEmail?: string }) {
   const pathname = usePathname();
-  const router = useRouter();
+  const { signOut, signingOut } = useAdminSignOut();
   const [open, setOpen] = useState(false);
-
-  const signOut = async () => {
-    try {
-      await disableDevicePush();
-    } catch {
-      window.alert("Notifications could not be disabled. Please try signing out again while online.");
-      return;
-    }
-    await createClient().auth.signOut();
-    router.push("/admin/login");
-    router.refresh();
-  };
 
   const tab =
     "flex min-h-[64px] flex-col items-center justify-center gap-0.5 text-xs font-semibold transition-colors";
@@ -66,6 +53,8 @@ export default function MobileNav({ userEmail }: { userEmail?: string }) {
             <button
               type="button"
               onClick={signOut}
+              disabled={signingOut}
+              aria-label="Sign out"
               className="flex min-h-[56px] w-full items-center gap-3 rounded-xl px-3 text-base font-semibold text-cat-stamp"
             >
               <LogOut className="h-5 w-5" /> Sign out
@@ -91,7 +80,7 @@ export default function MobileNav({ userEmail }: { userEmail?: string }) {
             </Link>
           );
         })}
-        <button type="button" onClick={() => setOpen(true)} className={tab} aria-haspopup="dialog">
+        <button type="button" onClick={() => setOpen(true)} className={tab} aria-haspopup="dialog" aria-label="More">
           <MoreHorizontal className="h-6 w-6" aria-hidden="true" />
           More
         </button>

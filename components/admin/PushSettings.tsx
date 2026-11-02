@@ -38,12 +38,18 @@ export async function adminRegistration() {
   }
   return registration;
 }
-async function pushRequest(path: string, method: string, body?: unknown) {
+async function pushRequest(
+  path: string,
+  method: string,
+  body?: unknown,
+  signal?: AbortSignal,
+) {
   const response = await fetch(path, {
     method,
     headers: { "Content-Type": "application/json" },
     body: body === undefined ? undefined : JSON.stringify(body),
     cache: "no-store",
+    signal,
   });
   const data = await response.json();
   if (!response.ok)
@@ -52,11 +58,39 @@ async function pushRequest(path: string, method: string, body?: unknown) {
 }
 export async function disableDevicePush() {
   if (!("serviceWorker" in navigator)) return;
-  const registration = await navigator.serviceWorker.getRegistration("/admin");
-  const sub = await registration?.pushManager?.getSubscription();
-  if (sub) {
-    await pushRequest("/api/admin/push", "DELETE", { endpoint: sub.endpoint });
-    await sub.unsubscribe();
+  const controller = new AbortController();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    await Promise.race([
+      (async () => {
+        const registration =
+          await navigator.serviceWorker.getRegistration("/admin");
+        const sub = await registration?.pushManager?.getSubscription();
+        if (!sub) return;
+        // Neither failure may prevent the other cleanup attempt.
+        const results = await Promise.allSettled([
+          pushRequest(
+            "/api/admin/push",
+            "DELETE",
+            { endpoint: sub.endpoint },
+            controller.signal,
+          ),
+          sub.unsubscribe().then((removed) => {
+            if (!removed) throw new Error("Browser subscription was not removed.");
+          }),
+        ]);
+        if (results.some((result) => result.status === "rejected"))
+          throw new Error("Notification cleanup could not be confirmed.");
+      })(),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => {
+          controller.abort();
+          reject(new Error("Notification cleanup timed out."));
+        }, 8000);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
   }
 }
 export default function PushSettings() {

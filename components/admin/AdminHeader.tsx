@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import InquiryNav from "./InquiryNav";
-import { disableDevicePush } from "./PushSettings";
-import { useRouter } from "next/navigation";
+import { useAdminSignOut } from "./useAdminSignOut";
 import {
   Cookie,
   LogOut,
@@ -12,29 +11,13 @@ import {
   DollarSign,
   StickyNote,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 
 interface AdminHeaderProps {
   userEmail?: string;
 }
 
 export default function AdminHeader({ userEmail }: AdminHeaderProps) {
-  const router = useRouter();
-  const supabase = createClient();
-
-  const handleSignOut = async () => {
-    try {
-      await disableDevicePush();
-    } catch {
-      window.alert(
-        "Notifications could not be disabled. Please try signing out again while online.",
-      );
-      return;
-    }
-    await supabase.auth.signOut();
-    router.push("/admin/login");
-    router.refresh();
-  };
+  const { signOut, signingOut } = useAdminSignOut();
 
   return (
     <header className="sticky top-0 z-50 bg-cat-ink text-[#FFF8E8] shadow-[0_4px_0_rgba(74,46,31,.25)]">
@@ -99,7 +82,8 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
               </span>
             )}
             <button
-              onClick={handleSignOut}
+              onClick={signOut}
+              disabled={signingOut}
               aria-label="Sign out"
               className="flex items-center justify-center min-h-11 min-w-11 gap-1 rounded-lg px-2 text-[#FFF8E8] hover:bg-white/10 hover:text-cat-tape transition-colors text-sm"
             >

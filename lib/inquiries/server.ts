@@ -12,7 +12,8 @@ export class InquiryError extends Error {
     super(message);
   }
 }
-export async function inquiryUser(request?: Request) {
+// Ownership-only cleanup must remain available after inquiry access is revoked.
+export async function authenticatedUser(request?: Request) {
   if (
     request &&
     request.method !== "GET" &&
@@ -23,7 +24,12 @@ export async function inquiryUser(request?: Request) {
     data: { user },
     error,
   } = await (await createClient()).auth.getUser();
-  if (error || !user) throw new InquiryError("Please sign in again.", 401);
+  if (error || !user || user.is_anonymous)
+    throw new InquiryError("Please sign in again.", 401);
+  return user;
+}
+export async function inquiryUser(request?: Request) {
+  const user = await authenticatedUser(request);
   if (!adminAllowed(user))
     throw new InquiryError("This account cannot access inquiries.", 403);
   return user;
