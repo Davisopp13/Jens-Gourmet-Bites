@@ -357,24 +357,27 @@ type Element = {
     disabled?: boolean;
   };
 };
-function signOutButton(element: Element): Element["props"] {
-  if (element?.props?.["aria-label"] === "Sign out") return element.props;
+function controlByLabel(element: Element, label: string): Element["props"] {
+  if (element?.props?.["aria-label"] === label) return element.props;
   for (const child of [element?.props?.children].flat(Infinity) as Element[]) {
     if (!child || typeof child !== "object") continue;
-    const found = signOutButton(child);
+    const found = controlByLabel(child, label);
     if (found) return found;
   }
   return undefined;
 }
-function headerHarness(
+type Surface = "desktop" | "mobile";
+function signOutHarness(
+  surface: Surface,
   disableDevicePush: () => Promise<void>,
   signOut = async () => ({ error: null as Error | null }),
 ) {
   const calls: string[] = [];
   const alerts: string[] = [];
   let busy = false;
-  const Header = loadModule<{ default(props: object): Element }>(
-    "components/admin/AdminHeader.tsx",
+  let menuOpen = false;
+  const hook = loadModule<Record<string, unknown>>(
+    "components/admin/useAdminSignOut.ts",
     {
       react: {
         useState: () => [
@@ -384,7 +387,6 @@ function headerHarness(
           },
         ],
       },
-      "next/link": () => null,
       "next/navigation": {
         useRouter: () => ({
           replace: (path: string) => {
@@ -395,7 +397,6 @@ function headerHarness(
           },
         }),
       },
-      "./InquiryNav": () => null,
       "./PushSettings": { disableDevicePush },
       "@/lib/supabase/client": {
         createClient: () => ({
@@ -416,85 +417,111 @@ function headerHarness(
       },
     },
   );
+  const Component = loadModule<{ default(props: object): Element }>(
+    surface === "desktop"
+      ? "components/admin/AdminHeader.tsx"
+      : "components/admin/MobileNav.tsx",
+    {
+      "./useAdminSignOut": hook,
+      react: {
+        useState: () => [
+          menuOpen,
+          (value: boolean) => {
+            menuOpen = value;
+          },
+        ],
+      },
+      "next/link": () => null,
+      "next/navigation": { usePathname: () => "/admin/products" },
+      "./InquiryNav": () => null,
+    },
+  );
   const button = () => {
-    const result = signOutButton(Header.default({}));
-    assert.ok(result, "The header must render its sign-out control");
+    if (surface === "mobile" && !menuOpen) {
+      const more = controlByLabel(Component.default({}), "More");
+      assert.ok(more, "The mobile menu must be reachable");
+      more.onClick!();
+    }
+    const result = controlByLabel(Component.default({}), "Sign out");
+    assert.ok(result, `${surface} must render its sign-out control`);
     return result;
   };
   return { button, calls, alerts };
 }
 
-test("revoked owner flow removes their device, unsubscribes, signs out and replaces the admin page", async () => {
-  await withAllowlist(other, async () => {
-    const route = routeHarness();
-    const browser = browserHarness({
-      request: async (_input, init) =>
-        route.route.DELETE(
-          new Request(`${origin}/api/admin/push`, {
-            ...init,
-            headers: { origin, "Content-Type": "application/json" },
-          }),
-        ),
+for (const surface of ["desktop", "mobile"] as const) {
+  test(`${surface}: revoked owner removes their device, unsubscribes, signs out and replaces the admin page`, async () => {
+    await withAllowlist(other, async () => {
+      const route = routeHarness();
+      const browser = browserHarness({
+        request: async (_input, init) =>
+          route.route.DELETE(
+            new Request(`${origin}/api/admin/push`, {
+              ...init,
+              headers: { origin, "Content-Type": "application/json" },
+            }),
+          ),
+      });
+      const h = signOutHarness(surface, browser.disableDevicePush);
+      await h.button().onClick!();
+      assert.equal(browser.unsubscribed(), 1);
+      assert.equal(
+        route.rows.some((row) => row.user_id === owner),
+        false,
+      );
+      assert.deepEqual(h.calls, ["signOut", "/admin/login", "refresh"]);
+      assert.deepEqual(h.alerts, []);
+      assert.equal(h.button().disabled, false);
     });
-    const header = headerHarness(browser.disableDevicePush);
-    await header.button().onClick!();
+  });
+
+  test(`${surface}: normal allowed-owner sign-out cleans both subscriptions before navigation`, async () => {
+    await withAllowlist(owner, async () => {
+      const route = routeHarness();
+      const browser = browserHarness({ request: async () => route.remove() });
+      const h = signOutHarness(surface, browser.disableDevicePush);
+      await h.button().onClick!();
+      assert.equal(browser.unsubscribed(), 1);
+      assert.equal(route.rows.length, 1);
+      assert.deepEqual(h.calls, ["signOut", "/admin/login", "refresh"]);
+      assert.deepEqual(h.alerts, []);
+    });
+  });
+
+  test(`${surface}: failed or stalled push cleanup still signs out with a warning and re-enables the button`, async () => {
+    const browser = browserHarness({
+      request: () => new Promise<Response>(() => {}),
+    });
+    const h = signOutHarness(surface, browser.disableDevicePush);
+    const pending = h.button().onClick!();
+    assert.equal(h.button().disabled, true);
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    browser.timeOut();
+    await pending;
     assert.equal(browser.unsubscribed(), 1);
-    assert.equal(
-      route.rows.some((row) => row.user_id === owner),
-      false,
-    );
-    assert.deepEqual(header.calls, ["signOut", "/admin/login", "refresh"]);
-    assert.deepEqual(header.alerts, []);
-    assert.equal(header.button().disabled, false);
-  });
-});
-
-test("normal allowed-owner sign-out also cleans both subscriptions before navigation", async () => {
-  await withAllowlist(owner, async () => {
-    const route = routeHarness();
-    const browser = browserHarness({ request: async () => route.remove() });
-    const header = headerHarness(browser.disableDevicePush);
-    await header.button().onClick!();
-    assert.equal(browser.unsubscribed(), 1);
-    assert.equal(route.rows.length, 1);
-    assert.deepEqual(header.calls, ["signOut", "/admin/login", "refresh"]);
-    assert.deepEqual(header.alerts, []);
-  });
-});
-
-test("failed or stalled push cleanup still signs out with actionable warning and re-enables the button", async () => {
-  const browser = browserHarness({
-    request: () => new Promise<Response>(() => {}),
-  });
-  const h = headerHarness(browser.disableDevicePush);
-  const pending = h.button().onClick!();
-  assert.equal(h.button().disabled, true);
-  await new Promise<void>((resolve) => setImmediate(resolve));
-  browser.timeOut();
-  await pending;
-  assert.equal(browser.unsubscribed(), 1);
-  assert.deepEqual(h.calls, ["signOut", "/admin/login", "refresh"]);
-  assert.match(h.alerts[0], /signed out.*device’s settings/);
-  assert.equal(h.button().disabled, false);
-  const failed = headerHarness(async () => {
-    throw new Error("403");
-  });
-  await failed.button().onClick!();
-  assert.deepEqual(failed.calls, ["signOut", "/admin/login", "refresh"]);
-  assert.equal(failed.alerts.length, 1);
-});
-
-test("Supabase returned errors or thrown failures do not claim success or navigate away", async () => {
-  for (const signOut of [
-    async () => ({ error: new Error("auth unavailable") }),
-    async (): Promise<{ error: Error | null }> => {
-      throw new Error("network failure");
-    },
-  ]) {
-    const h = headerHarness(async () => {}, signOut);
-    await h.button().onClick!();
-    assert.deepEqual(h.calls, ["signOut"]);
-    assert.match(h.alerts[0], /Sign-out could not be completed/);
+    assert.deepEqual(h.calls, ["signOut", "/admin/login", "refresh"]);
+    assert.match(h.alerts[0], /signed out.*device’s settings/);
     assert.equal(h.button().disabled, false);
-  }
-});
+    const failed = signOutHarness(surface, async () => {
+      throw new Error("403");
+    });
+    await failed.button().onClick!();
+    assert.deepEqual(failed.calls, ["signOut", "/admin/login", "refresh"]);
+    assert.equal(failed.alerts.length, 1);
+  });
+
+  test(`${surface}: Supabase returned errors or thrown failures do not claim success or navigate away`, async () => {
+    for (const signOut of [
+      async () => ({ error: new Error("auth unavailable") }),
+      async (): Promise<{ error: Error | null }> => {
+        throw new Error("network failure");
+      },
+    ]) {
+      const h = signOutHarness(surface, async () => {}, signOut);
+      await h.button().onClick!();
+      assert.deepEqual(h.calls, ["signOut"]);
+      assert.match(h.alerts[0], /Sign-out could not be completed/);
+      assert.equal(h.button().disabled, false);
+    }
+  });
+}

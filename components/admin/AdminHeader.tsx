@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import InquiryNav from "./InquiryNav";
-import { disableDevicePush } from "./PushSettings";
-import { useRouter } from "next/navigation";
+import { useAdminSignOut } from "./useAdminSignOut";
 import {
   Cookie,
   LogOut,
@@ -13,42 +11,13 @@ import {
   DollarSign,
   StickyNote,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 
 interface AdminHeaderProps {
   userEmail?: string;
 }
 
 export default function AdminHeader({ userEmail }: AdminHeaderProps) {
-  const router = useRouter();
-  const supabase = createClient();
-  const [signingOut, setSigningOut] = useState(false);
-
-  const handleSignOut = async () => {
-    setSigningOut(true);
-    let cleanupFailed = false;
-    try {
-      await disableDevicePush();
-    } catch {
-      cleanupFailed = true;
-    }
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      if (cleanupFailed)
-        window.alert(
-          "You are signed out, but notification cleanup could not be confirmed. If alerts continue, turn off notifications for Jen’s Admin in this device’s settings.",
-        );
-      router.replace("/admin/login");
-      router.refresh();
-    } catch {
-      window.alert(
-        "Sign-out could not be completed. Please try again.",
-      );
-    } finally {
-      setSigningOut(false);
-    }
-  };
+  const { signOut, signingOut } = useAdminSignOut();
 
   return (
     <header className="sticky top-0 z-50 bg-cat-ink text-[#FFF8E8] shadow-[0_4px_0_rgba(74,46,31,.25)]">
@@ -113,7 +82,7 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
               </span>
             )}
             <button
-              onClick={handleSignOut}
+              onClick={signOut}
               disabled={signingOut}
               aria-label="Sign out"
               className="flex items-center justify-center min-h-11 min-w-11 gap-1 rounded-lg px-2 text-[#FFF8E8] hover:bg-white/10 hover:text-cat-tape transition-colors text-sm"

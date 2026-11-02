@@ -4,6 +4,9 @@ Developed on `codex/signout-cleanup`, based on verified GitHub `main` at
 `23f495271c2df793c4a2f94b3141d7343a310718` (PR #6). After local review, the user
 authorized committing, pushing and merging the fix on November 2, 2026. This
 change needs no database migration or production configuration update.
+Concurrent PR #7 was integrated from `3d1612bb37a3579a51b609076f59e23604c2b3a2`;
+its new mobile navigation had a second cleanup-blocking sign-out handler, which
+now shares the same implementation as the desktop header.
 
 ## Problem and resulting behavior
 
@@ -22,7 +25,7 @@ work. Its checkout and the concurrent redesign work at `664562f` were preserved.
 - Browser unsubscribe and server removal run independently. An eight-second
   deadline covers subscription lookup and cleanup; it aborts an outstanding
   DELETE. Failure or timeout cannot prevent an attempt to sign out.
-- The header checks Supabase's returned error, disables the sign-out control
+- A shared hook checks Supabase's returned error, disables both desktop/mobile sign-out controls
   while busy, and replaces the current page with login only after sign-out
   succeeds. If notification cleanup could not be confirmed, it warns the user
   and gives the device-settings fallback. An actual auth failure stays visible
@@ -30,7 +33,7 @@ work. Its checkout and the concurrent redesign work at `664562f` were preserved.
 
 ## Validation
 
-- `npm run test:inquiries`: 19/19 passed, including 11 new sign-out regressions.
+- `npm run test:inquiries`: 23/23 passed, including 15 new sign-out regressions.
 - `npm run test:receipts`: 22/22 passed.
 - `npm run lint`: passed with no ESLint warnings or errors.
 - `node_modules/.bin/tsc --noEmit`: passed.
@@ -42,10 +45,10 @@ work. Its checkout and the concurrent redesign work at `664562f` were preserved.
   original source at the base revision, and pass with the fix.
 
 The new tests execute the actual route, authorization helper, push cleanup,
-and rendered header event handler with synthetic sessions/browser boundaries.
+and desktop/mobile event handlers with synthetic sessions/browser boundaries.
 The real Supabase query builder verifies endpoint/user ownership filters;
 existing database tests use isolated temporary native PostgreSQL clusters.
-Coverage includes revoked/normal sign-out, other-user isolation, invalid and
+Coverage includes desktop/mobile revoked/normal sign-out, other-user isolation, invalid and
 anonymous sessions, cross-origin requests, API 403/503/offline/malformed responses,
 unsubscribe rejection/false results, stalled operations, unsupported devices,
 and returned/thrown auth errors. No real subscription, user session or remote
@@ -54,7 +57,7 @@ database was used. Physical iPhone/Safari and live sign-out remain unverified.
 ## Review location and handoff
 
 Checkout: `/Users/davis/Documents/Codex/2026-11-02/task/jens-signout-fix`.
-Changes: four production source files, the inquiry test command, one new
+Changes: six production source files, the inquiry test command, one new
 regression test file, and this note. Dependency/lockfile contents are unchanged;
 `node_modules` points to the existing inquiry checkout whose lockfile matches.
 Review artifacts are in the sibling `review-evidence` directory.
