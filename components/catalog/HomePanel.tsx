@@ -1,9 +1,9 @@
 import Image from "next/image";
-import type { HomeNote } from "@/lib/site-settings";
+import { contentNote, type WebsiteContent } from "@/lib/website-content";
 import NoteCard from "./NoteCard";
 
 interface HomePanelProps {
-  note: HomeNote;
+  content: WebsiteContent;
   onBrowse: () => void;
   onOrder: () => void;
 }
@@ -16,33 +16,32 @@ const crumbs = [
   { left: "90%", size: 6, delay: "3s" },
 ];
 
-export default function HomePanel({ note, onBrowse, onOrder }: HomePanelProps) {
+export default function HomePanel({ content, onBrowse, onOrder }: HomePanelProps) {
+  const note = contentNote(content);
   return (
     <div className="flex flex-wrap items-center gap-8 lg:gap-12">
       <div className="relative order-2 min-w-0 flex-[1_1_420px] lg:order-1">
         <div className="inline-block border-b-[3px] border-[#D0584A] px-2 font-cat-hand text-3xl font-bold text-cat-rust">
-          Recipe No. 1
+          {content.homeEyebrow}
         </div>
         <h1 className="my-3 inline-block px-2 py-1.5 font-cat-display text-5xl font-normal leading-[1.08] md:text-[68px]">
-          <span className="cat-w1">Cookies,</span> <span className="cat-w2">from</span>{" "}
-          <span className="cat-w3">scratch.</span>
+          {content.homeHeading}
         </h1>
         <p className="mb-5 block max-w-[500px] px-2 py-1 text-[19px] leading-[1.7]">
-          Gourmet cookies made fresh in Johns Creek, Georgia. Choose from our selection of artisan
-          cookies, available as fresh-baked treats or convenient frozen dough.
+          {content.homeIntro}
         </p>
         <div className="flex flex-wrap gap-3.5 pl-2">
           <button
             onClick={onBrowse}
             className="cat-btn min-h-[48px] cursor-pointer rounded-lg bg-cat-sage px-7 py-3.5 text-lg font-semibold text-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-cat-sage"
           >
-            Flip through the recipes
+            {content.browseButton}
           </button>
           <button
             onClick={onOrder}
             className="cat-btn min-h-[48px] cursor-pointer rounded-lg border-2 border-dashed border-cat-ink bg-cat-paper px-6 py-3 text-lg font-semibold text-cat-ink focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-cat-sage"
           >
-            Place an order
+            {content.orderButton}
           </button>
         </div>
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 -bottom-2.5 h-px">

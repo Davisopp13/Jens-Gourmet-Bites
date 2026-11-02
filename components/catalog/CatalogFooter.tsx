@@ -1,11 +1,14 @@
 import { Mail, MapPin } from "lucide-react";
+import Image from "next/image";
+import type { WebsiteContent } from "@/lib/website-content";
 import type { TabId } from "./CatalogSite";
 
 interface CatalogFooterProps {
   onNavigate: (tab: TabId) => void;
+  content: WebsiteContent;
 }
 
-export default function CatalogFooter({ onNavigate }: CatalogFooterProps) {
+export default function CatalogFooter({ onNavigate, content }: CatalogFooterProps) {
   const linkClass =
     "min-h-[44px] cursor-pointer text-left underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-cat-tape";
 
@@ -14,8 +17,8 @@ export default function CatalogFooter({ onNavigate }: CatalogFooterProps) {
       <div className="mx-auto grid max-w-[1160px] gap-8 md:grid-cols-3">
         <div>
           <div className="font-cat-display text-2xl">Jen&apos;s Gourmet Bites</div>
-          <p className="mt-3 text-sm leading-relaxed">
-            Handcrafted gourmet cookies made with love. Available as fresh-baked or frozen dough.
+          <p className="mt-3 whitespace-pre-line break-words text-sm leading-relaxed">
+            {content.footerDescription}
           </p>
         </div>
         <div>
@@ -23,12 +26,12 @@ export default function CatalogFooter({ onNavigate }: CatalogFooterProps) {
           <ul className="mt-2 space-y-2 text-sm">
             <li className="flex items-center gap-2">
               <MapPin className="h-4 w-4 shrink-0" aria-hidden="true" />
-              Johns Creek, GA · Serving Metro Atlanta
+              {content.serviceArea}
             </li>
             <li className="flex items-center gap-2">
               <Mail className="h-4 w-4 shrink-0" aria-hidden="true" />
-              <a href="mailto:jensgourmetbites@gmail.com" className="underline-offset-4 hover:underline">
-                jensgourmetbites@gmail.com
+              <a href={`mailto:${content.publicEmail}`} className="break-all underline-offset-4 hover:underline">
+                {content.publicEmail}
               </a>
             </li>
           </ul>
@@ -44,15 +47,23 @@ export default function CatalogFooter({ onNavigate }: CatalogFooterProps) {
       </div>
       <div className="mx-auto mt-8 flex max-w-[1160px] flex-col items-center justify-between gap-3 border-t border-[#FFF3D6]/30 pt-6 text-sm md:flex-row">
         <p>&copy; {new Date().getFullYear()} Jen&apos;s Gourmet Bites. All rights reserved.</p>
-        <p>
-          Website by{" "}
+        <p className="flex items-center gap-2">
+          <span>Website by</span>
           <a
             href="https://docodelab.com"
+            aria-label="DO Code Lab"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline hover:text-cat-tape"
+            className="inline-flex items-center gap-2 rounded-sm text-white opacity-80 transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cat-tape"
           >
-            DO Code Lab
+            <Image
+              src="/images/do-code-lab-mark.png"
+              alt=""
+              width={322}
+              height={190}
+              className="h-5 w-auto shrink-0"
+            />
+            <span className="whitespace-nowrap font-sans text-base font-semibold leading-none tracking-[0.08em]">CODE LAB</span>
           </a>
         </p>
       </div>

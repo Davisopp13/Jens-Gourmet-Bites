@@ -3,8 +3,12 @@
 import { useRef, useState } from "react";
 import { Send, Loader2, CheckCircle, AlertCircle, X } from "lucide-react";
 import { ContactFormData, Product } from "@/lib/types";
+import { DEFAULT_WEBSITE_CONTENT, type WebsiteContent } from "@/lib/website-content";
 
 interface OrderPanelProps {
+  content?: WebsiteContent;
+  preview?: boolean;
+  previewSuccess?: boolean;
   picked: Product[];
   onRemove: (id: string) => void;
   onBrowse: () => void;
@@ -16,6 +20,9 @@ const fieldClass =
 const labelClass = "mb-1 block px-1 text-sm font-semibold";
 
 export default function OrderPanel({
+  content = DEFAULT_WEBSITE_CONTENT,
+  preview = false,
+  previewSuccess = false,
   picked,
   onRemove,
   onBrowse,
@@ -45,6 +52,7 @@ export default function OrderPanel({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (preview) return;
     setStatus("loading");
     setErrorMessage("");
 
@@ -103,17 +111,24 @@ export default function OrderPanel({
         Recipe No. 3 · your order card
       </div>
 
-      {status === "success" ? (
+      {(content.orderInstructions || content.fulfillmentInfo) && status !== "success" && !previewSuccess && (
+        <div className="mt-3 space-y-2 px-2 text-base leading-relaxed">
+          {content.orderInstructions && <p>{content.orderInstructions}</p>}
+          {content.fulfillmentInfo && <p>{content.fulfillmentInfo}</p>}
+        </div>
+      )}
+
+      {status === "success" || previewSuccess ? (
         <div className="mt-4 p-2" role="status">
           <CheckCircle
             className="mb-3 h-12 w-12 text-cat-sage"
             aria-hidden="true"
           />
           <h2 className="font-cat-display text-4xl font-normal">
-            Inquiry received!
+            {content.confirmationHeading}
           </h2>
           <p className="mt-2 text-lg leading-relaxed">
-            Your inquiry is saved. Jen will get back to you within 24 hours.
+            {content.confirmationMessage} {content.responseTime}
           </p>
           <button
             onClick={() => setStatus("idle")}

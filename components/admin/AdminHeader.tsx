@@ -55,14 +55,14 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
           </div>
 
           {/* Navigation */}
-          <nav className="order-last flex w-full items-center justify-center gap-0 sm:order-none sm:w-auto sm:gap-3">
+          <nav className="hidden items-center justify-center gap-3 lg:flex">
             <Link
               href="/"
               aria-label="View site"
               className="flex items-center justify-center min-h-11 min-w-11 gap-1 rounded-lg px-2 text-[#FFF8E8] hover:bg-white/10 hover:text-cat-tape transition-colors text-sm"
             >
               <Home className="w-4 h-4" />
-              <span className="hidden sm:inline">View Site</span>
+              <span className="hidden lg:inline">View Site</span>
             </Link>
             <Link
               href="/admin/products"
@@ -70,15 +70,15 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
               className="flex items-center justify-center min-h-11 min-w-11 gap-1 rounded-lg px-2 text-[#FFF8E8] hover:bg-white/10 hover:text-cat-tape transition-colors text-sm"
             >
               <Package className="w-4 h-4" />
-              <span className="hidden sm:inline">Products</span>
+              <span className="hidden lg:inline">Products</span>
             </Link>
             <Link
-              href="/admin/note"
-              aria-label="Home note"
+              href="/admin/content"
+              aria-label="Website Content"
               className="flex items-center justify-center min-h-11 min-w-11 gap-1 rounded-lg px-2 text-[#FFF8E8] hover:bg-white/10 hover:text-cat-tape transition-colors text-sm"
             >
               <StickyNote className="w-4 h-4" />
-              <span className="hidden sm:inline">Home Note</span>
+              <span className="hidden lg:inline">Website Content</span>
             </Link>
             <Link
               href="/admin/pricing"
@@ -86,13 +86,13 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
               className="flex items-center justify-center min-h-11 min-w-11 gap-1 rounded-lg px-2 text-[#FFF8E8] hover:bg-white/10 hover:text-cat-tape transition-colors text-sm"
             >
               <DollarSign className="w-4 h-4" />
-              <span className="hidden sm:inline">Pricing</span>
+              <span className="hidden lg:inline">Pricing</span>
             </Link>
             <InquiryNav />
           </nav>
 
           {/* User Info and Sign Out */}
-          <div className="flex items-center gap-4">
+          <div className="hidden items-center gap-4 lg:flex">
             {userEmail && (
               <span className="font-cat-hand text-xl text-cat-tape hidden 2xl:inline">
                 {userEmail}
@@ -104,7 +104,7 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
               className="flex items-center justify-center min-h-11 min-w-11 gap-1 rounded-lg px-2 text-[#FFF8E8] hover:bg-white/10 hover:text-cat-tape transition-colors text-sm"
             >
               <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Sign Out</span>
+              <span className="hidden lg:inline">Sign Out</span>
             </button>
           </div>
         </div>
