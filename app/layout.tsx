@@ -1,6 +1,25 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Playfair_Display, Inter, Young_Serif, Caveat, Lora } from "next/font/google";
 import "./globals.css";
+
+const youngSerif = Young_Serif({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-young-serif",
+  display: "swap",
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-caveat",
+  display: "swap",
+});
+
+const lora = Lora({
+  subsets: ["latin"],
+  variable: "--font-lora",
+  display: "swap",
+});
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -32,8 +51,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
-      <body className="font-body bg-cream text-primary-800 antialiased">
+    <html lang="en" className={`${playfair.variable} ${inter.variable} ${youngSerif.variable} ${caveat.variable} ${lora.variable}`}>
+      <body className="font-body bg-cream text-espresso antialiased">
         {children}
       </body>
     </html>

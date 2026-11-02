@@ -1,11 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import Hero from "@/components/Hero";
-import FeaturedSection from "@/components/FeaturedSection";
-import ProductGrid from "@/components/ProductGrid";
-import AboutSection from "@/components/AboutSection";
-import ContactForm from "@/components/ContactForm";
+import CatalogSite from "@/components/catalog/CatalogSite";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -20,20 +14,5 @@ export default async function HomePage() {
     console.error("Error fetching products:", error);
   }
 
-  const allProducts = products || [];
-  const featuredProducts = allProducts.filter((p) => p.is_featured);
-
-  return (
-    <>
-      <Header />
-      <main>
-        <Hero />
-        <FeaturedSection products={featuredProducts} />
-        <ProductGrid products={allProducts} />
-        <AboutSection />
-        <ContactForm />
-      </main>
-      <Footer />
-    </>
-  );
+  return <CatalogSite products={products || []} />;
 }
