@@ -10,7 +10,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
     return (
       <div className="text-center py-12">
         <span className="text-6xl mb-4 block">🍪</span>
-        <p className="text-primary-600 text-lg">
+        <p className="text-espresso text-lg">
           No products available at the moment. Check back soon!
         </p>
       </div>
@@ -22,7 +22,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
       <div className="container-custom">
         <div className="text-center mb-12">
           <h2 className="section-heading">Our Cookie Collection</h2>
-          <p className="text-primary-600 max-w-2xl mx-auto">
+          <p className="text-espresso max-w-2xl mx-auto">
             Each batch is handcrafted with premium ingredients and baked to
             perfection. Available as fresh-baked cookies or convenient frozen dough.
           </p>

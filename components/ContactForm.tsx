@@ -59,7 +59,7 @@ export default function ContactForm() {
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="section-heading">Place an Order</h2>
-            <p className="text-primary-600">
+            <p className="text-espresso">
               Ready to enjoy our gourmet cookies? Fill out the form below and
               we&apos;ll get back to you within 24 hours.
             </p>
@@ -93,7 +93,7 @@ export default function ContactForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-primary-700 mb-2">
-                    Name <span className="text-accent">*</span>
+                    Name <span className="text-accent-700">*</span>
                   </label>
                   <input
                     type="text"
@@ -109,7 +109,7 @@ export default function ContactForm() {
 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-primary-700 mb-2">
-                    Email <span className="text-accent">*</span>
+                    Email <span className="text-accent-700">*</span>
                   </label>
                   <input
                     type="email"
@@ -127,7 +127,7 @@ export default function ContactForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-primary-700 mb-2">
-                    Phone <span className="text-primary-400">(optional)</span>
+                    Phone <span className="text-primary-600">(optional)</span>
                   </label>
                   <input
                     type="tel"
@@ -160,7 +160,7 @@ export default function ContactForm() {
 
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-primary-700 mb-2">
-                  Message <span className="text-accent">*</span>
+                  Message <span className="text-accent-700">*</span>
                 </label>
                 <textarea
                   id="message"
