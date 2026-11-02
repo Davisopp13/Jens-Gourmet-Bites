@@ -21,3 +21,10 @@ Official setup references: https://resend.com/docs/send-with-nextjs and https://
 `npm run test:contact` checks the actual endpoint with intercepted database/provider HTTP calls: branded routing and reply address, HTML escaping, provider rejection/network failure/missing ID, absent key, database failure fallback and invalid input. These checks send no real emails and touch no database.
 
 Four contact endpoint test groups, lint, standalone TypeScript and production build pass. Release and live delivery evidence will be recorded after configuration and verification. Worktree: `/Users/davis/.codex/worktrees/jens-order-email`, branch `codex/order-email`, based on production `0d3334b`. The original dirty checkout remains preserved.
+
+
+Production `RESEND_API_KEY` (sensitive), `CONTACT_EMAIL` and `CONTACT_FROM_EMAIL` were configured after Davis approved the restricted key. Active key ID: `11f26987-e155-434e-a938-5f5e311df716`, sending-only for Jen's domain. The initial unused key was revoked before activation after the dashboard exposed its value in a tool result. No key value is recorded in source or documentation; the protected transfer file was removed.
+
+Rollback app deployment: `dpl_34GDW4FVLoPTQEdFbfoX68FP8yRE` (previous production `0d3334b`). Configuration can be removed independently. No schema migration is required.
+
+Workflow kit read: `PROJECTS.md`, `SKILL-CATALOG.md` and `prompts/DAILY-PROMPTS.md` under `/Users/davis/ai-workflow-kit`.
