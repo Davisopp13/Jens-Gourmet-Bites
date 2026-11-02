@@ -56,7 +56,7 @@ const config: Config = {
           900: "#5D2B19",
         },
         espresso: "#382A24",
-        // Card-catalog theme (public site only; the admin keeps the teal palette above)
+        // Card-catalog theme (public site only; the admin shares the sage palette above)
         cat: {
           wood: "#B98457",
           paper: "#FFFDF6",

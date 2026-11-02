@@ -29,7 +29,7 @@ export default function AboutSection() {
       <div className="container-custom">
         <div className="text-center mb-12">
           <h2 className="section-heading">About Jen&apos;s Gourmet Bites</h2>
-          <p className="text-primary-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-espresso max-w-3xl mx-auto leading-relaxed">
             What started as a passion for baking in my Johns Creek kitchen has grown
             into a labor of love that I&apos;m thrilled to share with you. Each cookie
             is made from scratch using family recipes and the finest ingredients,
@@ -49,7 +49,7 @@ export default function AboutSection() {
               <h3 className="font-display text-lg text-primary mb-2">
                 {feature.title}
               </h3>
-              <p className="text-primary-600 text-sm">{feature.description}</p>
+              <p className="text-espresso text-sm">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -59,7 +59,7 @@ export default function AboutSection() {
             <h3 className="font-display text-2xl text-primary mb-4">
               Serving Metro Atlanta
             </h3>
-            <p className="text-primary-700 leading-relaxed">
+            <p className="text-espresso leading-relaxed">
               Based in Johns Creek, Georgia, we&apos;re proud to serve cookie lovers
               throughout Metro Atlanta. Whether you&apos;re planning a special event,
               looking for the perfect gift, or simply treating yourself, our gourmet

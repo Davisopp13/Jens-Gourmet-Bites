@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Young_Serif, Caveat, Lora } from "next/font/google";
+import SitePwa from "@/components/SitePwa";
 import "./globals.css";
 
 const youngSerif = Young_Serif({
@@ -21,10 +22,15 @@ const lora = Lora({
   display: "swap",
 });
 
+export const viewport: Viewport = { themeColor: "#4a2e1f" };
+
 export const metadata: Metadata = {
   title: "Jen's Gourmet Bites | Artisan Cookies in Johns Creek, GA",
   description:
     "Handcrafted gourmet cookies made with love in Johns Creek, GA. Available as fresh-baked or frozen dough. Serving Metro Atlanta.",
+  manifest: "/site.webmanifest",
+  appleWebApp: { capable: true, title: "Jen's Cookies", statusBarStyle: "default" },
+  icons: { apple: "/site-icons/recipe-cookie-apple.png" },
   keywords: ["cookies", "gourmet", "bakery", "Johns Creek", "Atlanta", "frozen dough", "baked cookies"],
   openGraph: {
     title: "Jen's Gourmet Bites | Artisan Cookies",
@@ -41,6 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${youngSerif.variable} ${caveat.variable} ${lora.variable}`}>
       <body className="font-body bg-cream text-espresso antialiased">
+        <SitePwa />
         {children}
       </body>
     </html>

@@ -3,11 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { DollarSign, Home, LogOut, MoreHorizontal, Package, StickyNote, X } from "lucide-react";
+import { DollarSign, Home, Inbox, LogOut, MoreHorizontal, Package, StickyNote, X } from "lucide-react";
+import { disableDevicePush } from "./PushSettings";
 import { createClient } from "@/lib/supabase/client";
 
 const tabs = [
   { href: "/admin/products", label: "Products", Icon: Package },
+  { href: "/admin/inquiries", label: "Inquiries", Icon: Inbox },
   { href: "/admin/content", label: "Content", Icon: StickyNote },
   { href: "/admin/pricing", label: "Pricing", Icon: DollarSign },
 ];
@@ -18,6 +20,12 @@ export default function MobileNav({ userEmail }: { userEmail?: string }) {
   const [open, setOpen] = useState(false);
 
   const signOut = async () => {
+    try {
+      await disableDevicePush();
+    } catch {
+      window.alert("Notifications could not be disabled. Please try signing out again while online.");
+      return;
+    }
     await createClient().auth.signOut();
     router.push("/admin/login");
     router.refresh();
@@ -67,7 +75,7 @@ export default function MobileNav({ userEmail }: { userEmail?: string }) {
       )}
       <nav
         aria-label="Admin"
-        className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-4 bg-cat-ink pb-[env(safe-area-inset-bottom)] text-[#FFF8E8] shadow-[0_-4px_0_rgba(74,46,31,.25)] lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 bg-cat-ink pb-[env(safe-area-inset-bottom)] text-[#FFF8E8] shadow-[0_-4px_0_rgba(74,46,31,.25)] lg:hidden"
       >
         {tabs.map(({ href, label, Icon }) => {
           const active = pathname?.startsWith(href);

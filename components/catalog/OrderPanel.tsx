@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Send, Loader2, CheckCircle, AlertCircle, X } from "lucide-react";
 import { ContactFormData, Product } from "@/lib/types";
+import { DEFAULT_WEBSITE_CONTENT, type WebsiteContent } from "@/lib/website-content";
 
 interface OrderPanelProps {
+  content?: WebsiteContent;
+  preview?: boolean;
+  previewSuccess?: boolean;
   picked: Product[];
   onRemove: (id: string) => void;
   onBrowse: () => void;
@@ -15,7 +19,14 @@ const fieldClass =
 
 const labelClass = "mb-1 block px-1 text-sm font-semibold";
 
-export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelProps) {
+export default function OrderPanel({
+  content = DEFAULT_WEBSITE_CONTENT,
+  preview = false,
+  previewSuccess = false,
+  picked,
+  onRemove,
+  onBrowse,
+}: OrderPanelProps) {
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
@@ -23,11 +34,17 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
     message: "",
     preferred_format: "either",
   });
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const submission = useRef<{ payload: string; id: string } | null>(null);
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -41,13 +58,23 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
     const cookieLine = picked.length
       ? `Cookies on my order card: ${picked.map((p) => p.name).join(", ")}.`
       : "";
-    const message = [cookieLine, formData.message.trim()].filter(Boolean).join("\n\n");
+    const message = [cookieLine, formData.message.trim()]
+      .filter(Boolean)
+      .join("\n\n");
 
+    const payload = JSON.stringify({ ...formData, message });
+    if (!submission.current || submission.current.payload !== payload) {
+      submission.current = { payload, id: crypto.randomUUID() };
+    }
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, message }),
+        body: JSON.stringify({
+          ...formData,
+          message,
+          submission_id: submission.current.id,
+        }),
       });
 
       if (!response.ok) {
@@ -55,16 +82,27 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
         throw new Error(data.error || "Something went wrong");
       }
 
+      submission.current = null;
       setStatus("success");
-      setFormData({ name: "", email: "", phone: "", message: "", preferred_format: "either" });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+        preferred_format: "either",
+      });
     } catch (error) {
       setStatus("error");
-      setErrorMessage(error instanceof Error ? error.message : "Failed to submit");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Failed to submit",
+      );
     }
   };
 
   const headline =
-    picked.length === 0 ? "Nothing on the card yet" : `${picked.length} on the card, ready to bake`;
+    picked.length === 0
+      ? "Nothing on the card yet"
+      : `${picked.length} on the card, ready to bake`;
 
   return (
     <div className="max-w-[640px]">
@@ -72,12 +110,24 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
         Recipe No. 3 · your order card
       </div>
 
-      {status === "success" ? (
+      {(content.orderInstructions || content.fulfillmentInfo) && status !== "success" && !previewSuccess && (
+        <div className="mt-3 space-y-2 px-2 text-base leading-relaxed">
+          {content.orderInstructions && <p>{content.orderInstructions}</p>}
+          {content.fulfillmentInfo && <p>{content.fulfillmentInfo}</p>}
+        </div>
+      )}
+
+      {status === "success" || previewSuccess ? (
         <div className="mt-4 p-2" role="status">
-          <CheckCircle className="mb-3 h-12 w-12 text-cat-sage" aria-hidden="true" />
-          <h2 className="font-cat-display text-4xl font-normal">Your card is in the oven!</h2>
+          <CheckCircle
+            className="mb-3 h-12 w-12 text-cat-sage"
+            aria-hidden="true"
+          />
+          <h2 className="font-cat-display text-4xl font-normal">
+            {content.confirmationHeading}
+          </h2>
           <p className="mt-2 text-lg leading-relaxed">
-            Thank you for your order. Jen will get back to you within 24 hours.
+            {content.confirmationMessage} {content.responseTime}
           </p>
           <button
             onClick={() => setStatus("idle")}
@@ -122,8 +172,12 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
 
           {picked.length === 0 && (
             <p className="mt-3 inline-block px-2">
-              Pick some cookies first, or just tell Jen what you&apos;re craving below.{" "}
-              <button onClick={onBrowse} className="min-h-[44px] cursor-pointer text-cat-rust underline">
+              Pick some cookies first, or just tell Jen what you&apos;re craving
+              below.{" "}
+              <button
+                onClick={onBrowse}
+                className="min-h-[44px] cursor-pointer text-cat-rust underline"
+              >
                 Browse the cookies
               </button>
             </p>
@@ -131,8 +185,14 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
 
           <form onSubmit={handleSubmit} className="mt-5 space-y-4">
             {status === "error" && (
-              <div role="alert" className="flex items-start gap-3 rounded-lg border-2 border-cat-stamp bg-white p-3">
-                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-cat-stamp" aria-hidden="true" />
+              <div
+                role="alert"
+                className="flex items-start gap-3 rounded-lg border-2 border-cat-stamp bg-white p-3"
+              >
+                <AlertCircle
+                  className="mt-0.5 h-5 w-5 shrink-0 text-cat-stamp"
+                  aria-hidden="true"
+                />
                 <p className="text-sm text-cat-stamp">{errorMessage}</p>
               </div>
             )}
@@ -142,25 +202,57 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
                 <label htmlFor="name" className={labelClass}>
                   Name <span className="text-cat-stamp">*</span>
                 </label>
-                <input id="name" name="name" type="text" required value={formData.name} onChange={handleChange} className={fieldClass} placeholder="Your name" />
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={handleChange}
+                  className={fieldClass}
+                  placeholder="Your name"
+                />
               </div>
               <div>
                 <label htmlFor="email" className={labelClass}>
                   Email <span className="text-cat-stamp">*</span>
                 </label>
-                <input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} className={fieldClass} placeholder="your@email.com" />
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={fieldClass}
+                  placeholder="your@email.com"
+                />
               </div>
               <div>
                 <label htmlFor="phone" className={labelClass}>
                   Phone (optional)
                 </label>
-                <input id="phone" name="phone" type="tel" value={formData.phone} onChange={handleChange} className={fieldClass} placeholder="(555) 123-4567" />
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className={fieldClass}
+                  placeholder="(555) 123-4567"
+                />
               </div>
               <div>
                 <label htmlFor="preferred_format" className={labelClass}>
                   Preferred format
                 </label>
-                <select id="preferred_format" name="preferred_format" value={formData.preferred_format} onChange={handleChange} className={fieldClass}>
+                <select
+                  id="preferred_format"
+                  name="preferred_format"
+                  value={formData.preferred_format}
+                  onChange={handleChange}
+                  className={fieldClass}
+                >
                   <option value="either">Either is fine</option>
                   <option value="frozen">Frozen dough</option>
                   <option value="baked">Fresh baked</option>
@@ -170,7 +262,10 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
 
             <div>
               <label htmlFor="message" className={labelClass}>
-                Notes for Jen {picked.length === 0 && <span className="text-cat-stamp">*</span>}
+                Notes for Jen{" "}
+                {picked.length === 0 && (
+                  <span className="text-cat-stamp">*</span>
+                )}
               </label>
               <textarea
                 id="message"
@@ -191,7 +286,10 @@ export default function OrderPanel({ picked, onRemove, onBrowse }: OrderPanelPro
             >
               {status === "loading" ? (
                 <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
+                  <Loader2
+                    className="mr-2 h-5 w-5 animate-spin"
+                    aria-hidden="true"
+                  />
                   Sending…
                 </>
               ) : (
