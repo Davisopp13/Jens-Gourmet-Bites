@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Product } from "@/lib/types";
-import type { HomeNote } from "@/lib/site-settings";
+import { DEFAULT_WEBSITE_CONTENT, type WebsiteContent } from "@/lib/website-content";
 import HomePanel from "./HomePanel";
 import CookiesPanel from "./CookiesPanel";
 import OrderPanel from "./OrderPanel";
@@ -19,10 +19,10 @@ const TABS: { id: TabId; label: string; bg: string; delay: string }[] = [
 
 interface CatalogSiteProps {
   products: Product[];
-  note: HomeNote;
+  content?: WebsiteContent;
 }
 
-export default function CatalogSite({ products, note }: CatalogSiteProps) {
+export default function CatalogSite({ products, content = DEFAULT_WEBSITE_CONTENT }: CatalogSiteProps) {
   const [tab, setTab] = useState<TabId>("home");
   const [picks, setPicks] = useState<string[]>([]);
   const [bump, setBump] = useState(false);
@@ -73,7 +73,7 @@ export default function CatalogSite({ products, note }: CatalogSiteProps) {
     .filter((p): p is Product => Boolean(p));
 
   return (
-    <div className="min-h-screen overflow-hidden bg-cat-wood font-cat-body text-cat-ink [background-image:repeating-linear-gradient(90deg,rgba(74,46,31,.08)_0_2px,transparent_2px_38px)]">
+    <div className="min-h-screen overflow-hidden bg-cat-wood font-cat-body text-cat-ink [overflow-wrap:anywhere] [background-image:repeating-linear-gradient(90deg,rgba(74,46,31,.08)_0_2px,transparent_2px_38px)]">
       <header className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-4 px-4 py-4 text-[#FFF8E8] sm:px-6 sm:py-6">
         <Link href="/" className="font-cat-display text-xl sm:text-2xl md:text-[28px]">
           Jen&apos;s Gourmet Bites
@@ -117,7 +117,7 @@ export default function CatalogSite({ products, note }: CatalogSiteProps) {
 
         <div className="relative min-h-[560px] rounded-xl bg-cat-paper p-5 shadow-[0_14px_30px_rgba(40,22,10,.35)] [background-image:repeating-linear-gradient(transparent_0_39px,#C9DCE8_39px_40px)] md:p-14">
           <div key={tab} role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} className="cat-panel">
-            {tab === "home" && <HomePanel note={note} onBrowse={() => goTo("cookies")} onOrder={() => goTo("order")} />}
+            {tab === "home" && <HomePanel content={content} onBrowse={() => goTo("cookies")} onOrder={() => goTo("order")} />}
             {tab === "cookies" && (
               <CookiesPanel
                 products={products}
@@ -129,6 +129,7 @@ export default function CatalogSite({ products, note }: CatalogSiteProps) {
             )}
             {tab === "order" && (
               <OrderPanel
+                content={content}
                 picked={pickedProducts}
                 onRemove={(id) => setPicks((prev) => prev.filter((p) => p !== id))}
                 onBrowse={() => goTo("cookies")}
@@ -138,7 +139,7 @@ export default function CatalogSite({ products, note }: CatalogSiteProps) {
         </div>
       </main>
 
-      <CatalogFooter onNavigate={goTo} />
+      <CatalogFooter onNavigate={goTo} content={content} />
     </div>
   );
 }
