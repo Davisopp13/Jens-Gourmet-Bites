@@ -18,8 +18,8 @@ const crumbs = [
 
 export default function HomePanel({ note, onBrowse, onOrder }: HomePanelProps) {
   return (
-    <div className="flex flex-wrap items-center gap-10 lg:gap-12">
-      <div className="relative min-w-0 flex-[1_1_420px]">
+    <div className="flex flex-wrap items-center gap-8 lg:gap-12">
+      <div className="relative order-2 min-w-0 flex-[1_1_420px] lg:order-1">
         <div className="inline-block border-b-[3px] border-[#D0584A] px-2 font-cat-hand text-3xl font-bold text-cat-rust">
           Recipe No. 1
         </div>
@@ -56,7 +56,7 @@ export default function HomePanel({ note, onBrowse, onOrder }: HomePanelProps) {
         </div>
       </div>
 
-      <div className="relative mx-auto min-w-0 max-w-[440px] flex-[1_1_360px]">
+      <div className="relative order-1 mx-auto min-w-0 max-w-[260px] flex-[1_1_360px] pt-2 sm:max-w-[440px] lg:order-2 lg:pt-0">
         <div className="cat-polaroid bg-white px-4 pb-14 pt-4 shadow-[0_8px_20px_rgba(74,46,31,.3)]">
           <div className="relative aspect-square w-full overflow-hidden bg-[#D9B98A]">
             <Image
@@ -76,7 +76,7 @@ export default function HomePanel({ note, onBrowse, onOrder }: HomePanelProps) {
         />
       </div>
 
-      <div className="mt-5 min-w-0 flex-[1_1_100%]">
+      <div className="order-3 mt-5 min-w-0 flex-[1_1_100%]">
         <NoteCard note={note} />
       </div>
     </div>

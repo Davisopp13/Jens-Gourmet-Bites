@@ -74,14 +74,15 @@ export default function CatalogSite({ products, note }: CatalogSiteProps) {
 
   return (
     <div className="min-h-screen overflow-hidden bg-cat-wood font-cat-body text-cat-ink [background-image:repeating-linear-gradient(90deg,rgba(74,46,31,.08)_0_2px,transparent_2px_38px)]">
-      <header className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-4 px-6 py-6 text-[#FFF8E8]">
-        <Link href="/" className="font-cat-display text-2xl md:text-[28px]">
+      <header className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-4 px-4 py-4 text-[#FFF8E8] sm:px-6 sm:py-6">
+        <Link href="/" className="font-cat-display text-xl sm:text-2xl md:text-[28px]">
           Jen&apos;s Gourmet Bites
         </Link>
         <div className="flex items-center gap-3" aria-live="polite">
-          <span className="font-cat-hand text-2xl font-bold">on your order card:</span>
+          <span className="hidden font-cat-hand text-2xl font-bold sm:inline">on your order card:</span>
           <span
             key={picks.length}
+            aria-label={`${picks.length} on your order card`}
             className={`inline-flex h-11 min-w-[44px] items-center justify-center rounded-full bg-[#FFF8E8] font-cat-display text-[22px] text-cat-ink ${
               bump ? "cat-bump-a" : "cat-bump-b"
             }`}
