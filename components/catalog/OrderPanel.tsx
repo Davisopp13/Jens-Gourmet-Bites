@@ -52,6 +52,7 @@ export default function OrderPanel({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (preview) return;
     setStatus("loading");
     setErrorMessage("");
 
