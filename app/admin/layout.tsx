@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   icons: { apple: "/admin-icons/kitchen-apple.png" },
 };
 
-export const viewport: Viewport = { themeColor: "#4a2e1f" };
+export const viewport: Viewport = { themeColor: "#4a2e1f", width: "device-width", initialScale: 1, viewportFit: "cover" };
 
 export default async function AdminLayout({
   children,

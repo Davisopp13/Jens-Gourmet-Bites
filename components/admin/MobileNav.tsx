@@ -32,7 +32,7 @@ export default function MobileNav({ userEmail }: { userEmail?: string }) {
   };
 
   const tab =
-    "flex min-h-[64px] flex-col items-center justify-center gap-0.5 text-xs font-semibold transition-colors";
+    "flex min-h-[64px] min-w-0 flex-col items-center justify-center gap-1 px-0.5 text-[11px] font-semibold leading-none transition-colors";
 
   return (
     <>
@@ -75,7 +75,7 @@ export default function MobileNav({ userEmail }: { userEmail?: string }) {
       )}
       <nav
         aria-label="Admin"
-        className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 bg-cat-ink pb-[env(safe-area-inset-bottom)] text-[#FFF8E8] shadow-[0_-4px_0_rgba(74,46,31,.25)] lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-50 grid w-full grid-cols-5 bg-cat-ink pb-[max(env(safe-area-inset-bottom),0.5rem)] text-[#FFF8E8] shadow-[0_-4px_0_rgba(74,46,31,.25)] lg:hidden"
       >
         {tabs.map(({ href, label, Icon }) => {
           const active = pathname?.startsWith(href);
@@ -87,13 +87,13 @@ export default function MobileNav({ userEmail }: { userEmail?: string }) {
               className={`${tab} ${active ? "text-cat-tape" : ""}`}
             >
               <Icon className="h-6 w-6" aria-hidden="true" />
-              {label}
+              <span className="max-w-full truncate">{label}</span>
             </Link>
           );
         })}
         <button type="button" onClick={() => setOpen(true)} className={tab} aria-haspopup="dialog">
           <MoreHorizontal className="h-6 w-6" aria-hidden="true" />
-          More
+          <span>More</span>
         </button>
       </nav>
     </>
