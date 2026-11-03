@@ -20,7 +20,7 @@ export default function AdminHeader({ userEmail }: AdminHeaderProps) {
   const { signOut, signingOut } = useAdminSignOut();
 
   return (
-    <header className="sticky top-0 z-50 bg-cat-ink text-[#FFF8E8] shadow-[0_4px_0_rgba(74,46,31,.25)]">
+    <header className="sticky top-0 z-50 hidden bg-cat-ink lg:block text-[#FFF8E8] shadow-[0_4px_0_rgba(74,46,31,.25)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between min-h-16 mb-6 py-2">
           {/* Logo and Title */}
