@@ -1,19 +1,21 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { X, Loader2, ImageIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { generateImagePath } from "@/lib/utils";
+import { imageUploadError, uploadProductImage } from "@/lib/product-images";
 
 interface ImageUploaderProps {
   currentImageUrl: string | null;
   onImageUploaded: (url: string | null) => void;
+  onUploadingChange?: (uploading: boolean) => void;
 }
 
 export default function ImageUploader({
   currentImageUrl,
   onImageUploaded,
+  onUploadingChange,
 }: ImageUploaderProps) {
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -21,58 +23,37 @@ export default function ImageUploader({
   const [preview, setPreview] = useState<string | null>(currentImageUrl);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    return () => {
+      if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
-    const validTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!validTypes.includes(file.type)) {
-      setError("Please upload a JPG, PNG, or WebP image");
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Image must be less than 5MB");
-      return;
-    }
+    // Reset immediately so selecting the same image after a failure fires change.
+    e.target.value = "";
+    if (!file || uploading) return;
 
     setError("");
     setUploading(true);
+    onUploadingChange?.(true);
 
     try {
       // Create preview
       const objectUrl = URL.createObjectURL(file);
       setPreview(objectUrl);
 
-      // Generate unique path
-      const filePath = generateImagePath(file.name);
-
-      // Upload to Supabase Storage
-      const { data, error: uploadError } = await supabase.storage
-        .from("product-images")
-        .upload(filePath, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      // Get public URL
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("product-images").getPublicUrl(data.path);
-
+      const publicUrl = await uploadProductImage(supabase, file);
+      setPreview(publicUrl);
       onImageUploaded(publicUrl);
     } catch (err) {
       console.error("Upload error:", err);
-      setError("Failed to upload image. Please try again.");
+      setError(imageUploadError(err));
       setPreview(currentImageUrl);
     } finally {
       setUploading(false);
+      onUploadingChange?.(false);
     }
   };
 
@@ -114,7 +95,7 @@ export default function ImageUploader({
         </div>
       ) : (
         <div
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => !uploading && fileInputRef.current?.click()}
           className="w-full max-w-xs aspect-[4/3] border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-primary-50/50 transition-colors"
         >
           {uploading ? (
@@ -136,10 +117,11 @@ export default function ImageUploader({
         type="file"
         accept="image/jpeg,image/png,image/webp"
         onChange={handleFileSelect}
+        disabled={uploading}
         className="hidden"
       />
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
     </div>
   );
 }
