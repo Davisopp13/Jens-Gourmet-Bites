@@ -200,7 +200,74 @@ export default function IngredientsManager({
           No ingredients yet. Add your first ingredient to get started!
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <>
+        <ul className="space-y-3 md:hidden">
+          {ingredients.map((ingredient) => (
+            <li
+              key={ingredient.id}
+              className="rounded-lg border border-gray-200 bg-white p-4"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium text-gray-900 break-words">
+                    {ingredient.name}
+                  </p>
+                  <p className="mt-0.5 text-sm text-gray-500">
+                    {ingredient.package_quantity} {ingredient.unit}
+                  </p>
+                </div>
+                <p className="shrink-0 font-medium text-gray-900">
+                  {formatCurrency(ingredient.current_price_cents)}
+                </p>
+              </div>
+              <div className="mt-3 flex items-center justify-between gap-3">
+                <p className="min-w-0 truncate text-sm text-gray-500">
+                  {ingredient.supplier_name || "No supplier"}
+                </p>
+                <div className="flex shrink-0 items-center">
+                  {ingredient.supplier_url && (
+                    <a
+                      href={ingredient.supplier_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Open ${ingredient.name} supplier page`}
+                      className="flex min-h-11 min-w-11 items-center justify-center text-primary"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
+                  {ingredient.supplier_url && (
+                    <button
+                      onClick={() => handleScrapeOne(ingredient.id)}
+                      disabled={scrapingId === ingredient.id}
+                      aria-label={`Update ${ingredient.name} price from supplier`}
+                      className="flex min-h-11 min-w-11 items-center justify-center text-blue-600"
+                    >
+                      <RefreshCw
+                        className={`w-4 h-4 ${scrapingId === ingredient.id ? "animate-spin" : ""}`}
+                      />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleEdit(ingredient.id)}
+                    aria-label={`Edit ${ingredient.name}`}
+                    className="flex min-h-11 min-w-11 items-center justify-center text-primary"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(ingredient.id)}
+                    aria-label={`Delete ${ingredient.name}`}
+                    className="flex min-h-11 min-w-11 items-center justify-center text-red-600"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -281,6 +348,7 @@ export default function IngredientsManager({
             </tbody>
           </table>
         </div>
+        </>
       )}
     </div>
   );

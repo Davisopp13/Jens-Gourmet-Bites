@@ -398,9 +398,9 @@ function RecipeForm({
             {recipeIngredients.map((ri, index) => (
               <div
                 key={index}
-                className="grid grid-cols-12 gap-2 items-start bg-white p-3 rounded border border-gray-200"
+                className="grid grid-cols-2 md:grid-cols-12 gap-2 items-start bg-white p-3 rounded border border-gray-200"
               >
-                <div className="col-span-5">
+                <div className="col-span-2 md:col-span-5">
                   <select
                     required
                     value={ri.ingredient_id}
@@ -417,9 +417,10 @@ function RecipeForm({
                     ))}
                   </select>
                 </div>
-                <div className="col-span-2">
+                <div className="md:col-span-2">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="0.001"
                     required
                     min="0.001"
@@ -435,7 +436,7 @@ function RecipeForm({
                     placeholder="Qty"
                   />
                 </div>
-                <div className="col-span-2">
+                <div className="md:col-span-2">
                   <select
                     value={ri.unit}
                     onChange={(e) =>
@@ -450,7 +451,7 @@ function RecipeForm({
                     ))}
                   </select>
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-2 md:col-span-2">
                   <input
                     type="text"
                     value={ri.notes || ""}
@@ -461,11 +462,12 @@ function RecipeForm({
                     placeholder="Notes"
                   />
                 </div>
-                <div className="col-span-1 flex justify-center">
+                <div className="col-span-2 md:col-span-1 flex justify-end md:justify-center">
                   <button
                     type="button"
+                    aria-label="Remove ingredient"
                     onClick={() => handleRemoveIngredient(index)}
-                    className="text-red-600 hover:text-red-900"
+                    className="flex min-h-11 min-w-11 items-center justify-center text-red-600 hover:text-red-900"
                   >
                     <X className="w-4 h-4" />
                   </button>
