@@ -4,7 +4,7 @@
 
 Supabase project `hdbtxiyvrkuzhwgrffip` still had Site URL `http://localhost:3000` and no redirect allowlist. The dashboard invitation for Davis's new account was confirmed before the browser reached localhost. No invitation/password-setup route existed in the production app. The browser client uses PKCE, whereas dashboard invitations/recovery emails return implicit tokens; the installed SDK rejects automatic implicit parsing in a PKCE client.
 
-`/auth/setup` explicitly accepts dashboard token fragments and browser PKCE codes using a dedicated browser client with automatic URL detection disabled. It verifies the user with Auth, removes URL credentials, displays the target email, and lets the user set and confirm their own password. It rejects failed/expired links before considering any existing session and rechecks the account before updating a password. The route does not grant admin permissions. Login now offers “Set or reset your password,” with a generic email response.
+`/auth/setup` explicitly accepts dashboard token fragments and browser PKCE codes. It captures and removes URL credentials before constructing its dedicated browser client, preventing the SDK from also consuming the code (the installed SSR wrapper overrides `detectSessionInUrl`). It verifies the user with Auth, displays the target email, and lets the user set and confirm their own password. It rejects failed/expired links before considering any existing session and rechecks the account before updating a password. The route does not grant admin permissions. Login now offers “Set or reset your password,” with a generic email response.
 
 ## Hosted configuration
 
