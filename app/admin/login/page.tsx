@@ -14,6 +14,23 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [notice, setNotice] = useState("");
+
+  async function requestPasswordLink() {
+    if (!email.trim()) { setError("Enter your email address first."); return; }
+    setLoading(true);
+    setError("");
+    setNotice("");
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: `${window.location.origin}/auth/setup`,
+      });
+      if (error) throw error;
+      setNotice("If this email has an account, a password link is on its way. Open the newest email link in this browser.");
+    } catch {
+      setError("Unable to send a password link. Please try again shortly.");
+    } finally { setLoading(false); }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +99,7 @@ export default function AdminLoginPage() {
           )}
 
           {/* Login Form */}
+          {notice && <p role="status" className="mb-6 rounded-lg bg-white/60 p-4 text-sm">{notice}</p>}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
@@ -134,6 +152,7 @@ export default function AdminLoginPage() {
               )}
             </button>
           </form>
+          <button type="button" onClick={requestPasswordLink} disabled={loading} className="mt-4 min-h-[44px] w-full text-sm underline disabled:opacity-50">Set or reset your password</button>
         </div>
       </div>
     </div>
