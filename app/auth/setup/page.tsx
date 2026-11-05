@@ -7,11 +7,7 @@ import { createBrowserClient } from "@supabase/ssr";
 import { invalidSetupLink, passwordValidation, verifyPasswordSession } from "@/lib/auth/password-setup";
 
 export default function PasswordSetupPage() {
-  const [supabase] = useState(() => createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { isSingleton: false, auth: { detectSessionInUrl: false } },
-  ));
+  const client = useRef<ReturnType<typeof createBrowserClient> | null>(null);
   const verification = useRef<Promise<string> | null>(null);
   const [email, setEmail] = useState("");
   const [checking, setChecking] = useState(true);
@@ -23,18 +19,27 @@ export default function PasswordSetupPage() {
 
   useEffect(() => {
     let active = true;
-    verification.current ??= verifyPasswordSession(supabase.auth, window.location.href);
+    if (!verification.current) {
+      const href = window.location.href;
+      // @supabase/ssr overrides detectSessionInUrl. Remove credentials BEFORE
+      // constructing its client so only our explicit exchange consumes the link.
+      window.history.replaceState(null, "", "/auth/setup");
+      client.current = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        { isSingleton: false },
+      );
+      verification.current = verifyPasswordSession(client.current.auth, href);
+    }
     verification.current.then(verifiedEmail => {
       if (active) setEmail(verifiedEmail);
     }).catch(() => {
       if (active) setError(invalidSetupLink);
     }).finally(() => {
-      // Remove email credentials from the address bar after SDK consumption.
-      window.history.replaceState(null, "", "/auth/setup");
       if (active) setChecking(false);
     });
     return () => { active = false; };
-  }, [supabase]);
+  }, []);
 
   async function savePassword(event: React.FormEvent) {
     event.preventDefault();
@@ -43,6 +48,8 @@ export default function PasswordSetupPage() {
     setSaving(true);
     setError("");
     try {
+      const supabase = client.current;
+      if (!supabase) throw new Error(invalidSetupLink);
       // Recheck identity before changing a credential in a potentially stale tab.
       const { data, error: authError } = await supabase.auth.getUser();
       if (authError || data.user?.email !== email) throw new Error(invalidSetupLink);
