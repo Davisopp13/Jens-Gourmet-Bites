@@ -19,7 +19,8 @@ export const getPublishedContent = cache(async () => {
 
 export function contentAdminAllowed(user: { id: string; is_anonymous?: boolean }) {
   const allowed = process.env.WEBSITE_CONTENT_ADMIN_USER_IDS ?? process.env.RECEIPT_ADMIN_USER_IDS ?? "";
-  return isWebsiteContentAdmin(user, allowed);
+  // Add content-only editors without replacing the existing authorization list.
+  return isWebsiteContentAdmin(user, allowed, process.env.WEBSITE_CONTENT_ADDITIONAL_ADMIN_USER_IDS);
 }
 
 export async function getContentState(): Promise<ContentState> {
