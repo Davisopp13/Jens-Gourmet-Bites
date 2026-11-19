@@ -2,12 +2,19 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { Berkshire_Swash } from "next/font/google";
 import { Product } from "@/lib/types";
 import { DEFAULT_WEBSITE_CONTENT, type WebsiteContent } from "@/lib/website-content";
 import HomePanel from "./HomePanel";
 import CookiesPanel from "./CookiesPanel";
 import OrderPanel from "./OrderPanel";
 import CatalogFooter from "./CatalogFooter";
+
+const brandFont = Berkshire_Swash({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export type TabId = "home" | "cookies" | "order";
 
@@ -75,7 +82,7 @@ export default function CatalogSite({ products, content = DEFAULT_WEBSITE_CONTEN
   return (
     <div className="min-h-screen overflow-hidden cat-red-wood font-cat-body text-cat-ink [overflow-wrap:anywhere]">
       <header className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-4 px-4 py-4 text-[#FFF8E8] sm:px-6 sm:py-6">
-        <Link href="/" className="font-cat-display text-xl sm:text-2xl md:text-[28px]">
+        <Link href="/" className={`${brandFont.className} text-2xl sm:text-3xl md:text-[36px] leading-tight`}>
           Jen&apos;s Gourmet Bites
         </Link>
         <div className="flex items-center gap-3" aria-live="polite">
