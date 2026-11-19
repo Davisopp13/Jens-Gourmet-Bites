@@ -12,7 +12,7 @@ export default function NoteCard({ note, animated = true }: NoteCardProps) {
     >
       <div
         aria-hidden="true"
-        className="absolute -top-3.5 left-[12%] h-[30px] w-24 bg-[rgba(208,88,74,.55)]"
+        className="absolute -top-3.5 left-[12%] h-[30px] w-24 cat-tape-texture"
       />
       <div className="font-cat-hand text-[30px] font-bold text-cat-rust">{note.title}</div>
       <p className="mt-1 whitespace-pre-line font-cat-display text-2xl leading-[1.4] md:text-[28px]">

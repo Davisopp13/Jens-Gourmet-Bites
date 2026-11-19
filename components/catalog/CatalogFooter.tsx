@@ -50,7 +50,7 @@ export default function CatalogFooter({ onNavigate, content }: CatalogFooterProp
         <p className="flex items-center gap-2">
           <span>Website by</span>
           <a
-            href="https://docodelab.com"
+            href="https://www.docodelab.com/"
             aria-label="DO Code Lab"
             target="_blank"
             rel="noopener noreferrer"
@@ -59,8 +59,8 @@ export default function CatalogFooter({ onNavigate, content }: CatalogFooterProp
             <Image
               src="/images/do-code-lab-mark.png"
               alt=""
-              width={322}
-              height={190}
+              width={289}
+              height={173}
               className="h-5 w-auto shrink-0"
             />
             <span className="whitespace-nowrap font-sans text-base font-semibold leading-none tracking-[0.08em]">CODE LAB</span>

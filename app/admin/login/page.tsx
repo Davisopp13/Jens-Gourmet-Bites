@@ -77,7 +77,7 @@ export default function AdminLoginPage() {
         <div className="relative rounded-xl bg-cat-paper p-8 shadow-[0_14px_30px_rgba(40,22,10,.35)]">
           <div
             aria-hidden="true"
-            className="absolute -top-3.5 left-1/2 -ml-12 h-[30px] w-24 -rotate-3 bg-cat-tape/85"
+            className="absolute -top-3.5 left-1/2 -ml-12 h-[30px] w-24 -rotate-3 cat-tape-texture"
           />
           {/* Logo */}
           <div className="text-center mb-8 bg-cat-paper pb-2">

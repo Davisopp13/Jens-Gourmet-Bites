@@ -100,7 +100,7 @@ export default function CatalogSite({ products, content = DEFAULT_WEBSITE_CONTEN
       </header>
 
       <main id="main" className="cat-drawer mx-auto max-w-[1160px] px-4 pb-10 md:px-6">
-        <div role="tablist" aria-label="Sections" className="flex flex-wrap gap-1.5 pl-4 md:pl-7">
+        <div role="tablist" aria-label="Sections" className="cat-folder-tabs flex gap-1 pl-2 md:gap-2 md:pl-5">
           {TABS.map((t) => {
             const active = tab === t.id;
             return (
@@ -112,9 +112,7 @@ export default function CatalogSite({ products, content = DEFAULT_WEBSITE_CONTEN
                 aria-controls={`panel-${t.id}`}
                 onClick={() => goTo(t.id)}
                 style={{ animationDelay: t.delay }}
-                className={`cat-tab min-h-[44px] cursor-pointer rounded-t-[14px] font-cat-hand text-[26px] font-bold text-cat-ink focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-cat-sage ${t.bg} ${
-                  active ? "px-7 pb-3.5 pt-2.5" : "px-6 pb-1.5 pt-1.5"
-                }`}
+                className={`cat-tab min-h-[44px] cursor-pointer font-cat-hand text-[26px] font-bold text-cat-ink focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-cat-sage ${t.bg}`}
               >
                 {t.label}
               </button>
@@ -122,7 +120,8 @@ export default function CatalogSite({ products, content = DEFAULT_WEBSITE_CONTEN
           })}
         </div>
 
-        <div className="relative min-h-[560px] rounded-xl bg-cat-paper p-5 shadow-[0_14px_30px_rgba(40,22,10,.35)] cat-notebook md:p-14">
+        <div className={`cat-folder relative rounded-xl p-2 pt-3 shadow-[0_14px_30px_rgba(40,22,10,.35)] md:p-3 md:pt-4 ${TABS.find((t) => t.id === tab)!.bg}`}>
+        <div className="relative min-h-[560px] rounded-md bg-cat-paper p-5 cat-notebook md:p-14">
           <div key={tab} role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} className="cat-panel">
             {tab === "home" && <HomePanel content={content} onBrowse={() => goTo("cookies")} onOrder={() => goTo("order")} />}
             {tab === "cookies" && (
@@ -143,6 +142,7 @@ export default function CatalogSite({ products, content = DEFAULT_WEBSITE_CONTEN
               />
             )}
           </div>
+        </div>
         </div>
       </main>
 

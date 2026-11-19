@@ -70,7 +70,7 @@ export default function HomePanel({ content, onBrowse, onOrder }: HomePanelProps
         </div>
         <div
           aria-hidden="true"
-          className="cat-tape absolute -top-3.5 left-1/2 -ml-12 h-[30px] w-24 bg-[url('/images/masking-tape.webp')] bg-contain bg-center bg-no-repeat"
+          className="cat-tape absolute -top-3.5 left-1/2 -ml-12 h-[30px] w-24 cat-tape-texture"
         />
       </div>
 
