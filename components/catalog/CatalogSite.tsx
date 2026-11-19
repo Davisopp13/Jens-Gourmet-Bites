@@ -73,7 +73,7 @@ export default function CatalogSite({ products, content = DEFAULT_WEBSITE_CONTEN
     .filter((p): p is Product => Boolean(p));
 
   return (
-    <div className="min-h-screen overflow-hidden bg-cat-wood font-cat-body text-cat-ink [overflow-wrap:anywhere] [background-image:repeating-linear-gradient(90deg,rgba(74,46,31,.08)_0_2px,transparent_2px_38px)]">
+    <div className="min-h-screen overflow-hidden cat-red-wood font-cat-body text-cat-ink [overflow-wrap:anywhere]">
       <header className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-4 px-4 py-4 text-[#FFF8E8] sm:px-6 sm:py-6">
         <Link href="/" className="font-cat-display text-xl sm:text-2xl md:text-[28px]">
           Jen&apos;s Gourmet Bites
