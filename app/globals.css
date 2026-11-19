@@ -192,3 +192,10 @@
   background-repeat: repeat;
   background-size: 960px 1280px;
 }
+
+/* Photographic paper, scaled to preserve the notebook's 40px ruling. */
+.cat-notebook {
+  background-image: url('/images/notebook-paper.webp');
+  background-size: 530px auto;
+  background-repeat: repeat;
+}

@@ -122,7 +122,7 @@ export default function CatalogSite({ products, content = DEFAULT_WEBSITE_CONTEN
           })}
         </div>
 
-        <div className="relative min-h-[560px] rounded-xl bg-cat-paper p-5 shadow-[0_14px_30px_rgba(40,22,10,.35)] [background-image:repeating-linear-gradient(transparent_0_39px,#C9DCE8_39px_40px)] md:p-14">
+        <div className="relative min-h-[560px] rounded-xl bg-cat-paper p-5 shadow-[0_14px_30px_rgba(40,22,10,.35)] cat-notebook md:p-14">
           <div key={tab} role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} className="cat-panel">
             {tab === "home" && <HomePanel content={content} onBrowse={() => goTo("cookies")} onOrder={() => goTo("order")} />}
             {tab === "cookies" && (
