@@ -61,7 +61,7 @@ export default function CatalogFooter({ onNavigate, content }: CatalogFooterProp
               alt=""
               width={289}
               height={173}
-              className="h-5 w-auto shrink-0"
+              className="h-5 w-auto shrink-0 brightness-0 invert"
             />
             <span className="whitespace-nowrap font-sans text-base font-semibold leading-none tracking-[0.08em]">CODE LAB</span>
           </a>
