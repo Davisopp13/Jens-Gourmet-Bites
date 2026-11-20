@@ -31,6 +31,7 @@ export default function ProductForm({ product, mode }: ProductFormProps) {
   const router = useRouter();
   const supabase = createClient();
   const [loading, setLoading] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState<ProductFormData>(
@@ -82,6 +83,7 @@ export default function ProductForm({ product, mode }: ProductFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || imageUploading) return;
     setError("");
     setLoading(true);
 
@@ -311,6 +313,7 @@ export default function ProductForm({ product, mode }: ProductFormProps) {
             <ImageUploader
               currentImageUrl={formData.image_url}
               onImageUploaded={handleImageUploaded}
+              onUploadingChange={setImageUploading}
             />
           </div>
 
@@ -349,13 +352,13 @@ export default function ProductForm({ product, mode }: ProductFormProps) {
           <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-40 -mx-4 border-t-2 border-cat-ink bg-cat-paper px-4 py-3 lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:p-0">
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || imageUploading}
             className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? (
+            {loading || imageUploading ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                Saving...
+                {imageUploading ? "Uploading image..." : "Saving..."}
               </>
             ) : (
               <>
